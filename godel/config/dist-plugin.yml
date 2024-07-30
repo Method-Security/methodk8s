@@ -1,5 +1,5 @@
 products:
-  k8scli:
+  methodk8s:
     build:
       main-pkg: .
       version-var: main.version

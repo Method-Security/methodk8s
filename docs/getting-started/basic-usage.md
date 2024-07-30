@@ -1,6 +1,6 @@
 # Basic Usage
 
-Before you get started, you will need to export K8s credentials that you want methodaws to utilize as environment variables. 
+Before you get started, you will need to export K8s credentials that you want methodk8s to utilize as environment variables. 
 **********TODO***************
 
 ## Binaries
