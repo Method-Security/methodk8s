@@ -1,0 +1,11 @@
+types:
+  ProtocolTypes:
+      enum:
+        - HTTP
+        - HTTPS
+        - TCP
+        - TLS
+        - UDP
+        - TCP_UDP
+        - GENEVE
+        - UNDEFINED

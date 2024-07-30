@@ -1,0 +1,37 @@
+imports:
+  common: ./common.yml
+types:
+  StatusTypes:
+    enum:
+      - PENDING
+      - RUNNING
+      - SUCCEEDED
+      - FAILED
+      - UNKNOWN
+  Status:
+    properties:
+      status: StatusTypes
+      podIp: string
+      hostIp: string
+  ContainerPort:
+    properties:
+      port: integer
+      protocol: common.ProtocolTypes
+  SecurityContext:
+    properties:
+      runAsRoot: boolean
+      allowPrivilegeEscalation: boolean
+      readOnlyRootFilesystem: boolean
+  Container:
+    properties:
+      name: string
+      image: string
+      ports: list<ContainerPort>
+      securityContext: SecurityContext
+  Pod:
+    properties:
+      name: string
+      namespace: string
+      version: string
+      status: Status
+      containers: list<Container>
