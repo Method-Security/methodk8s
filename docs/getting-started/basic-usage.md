@@ -13,7 +13,7 @@ methodk8s pod enumerate --context minikube --path ~/.kube/config
 
 ## Docker
 
-Running methodaws within a Docker container requires that you pass the AWS credential environment variables into the container. This can be done with the following command:
+Running methodk8s within a Docker container requires that you pass the k8s credential environment variables into the container. This can be done with the following command:
 
 ```bash
 docker run \

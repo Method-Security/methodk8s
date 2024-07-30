@@ -1,6 +1,6 @@
 # Ingress
 
-The `methodk8s ingress` family of commands provide information about an cluster's ingresses.
+The `methodk8s ingress` family of commands provide information about a cluster's ingresses.
 
 ## Enumerate
 
@@ -19,7 +19,7 @@ $ methodk8s ingress enumerate -h
 Enumerate Ingress objects
 
 Usage:
-  methodaws ec2 enumerate [flags]
+  methodk8s ingress enumerate [flags]
 
 Flags:
       --gateways   Only include gateway objects
