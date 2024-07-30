@@ -10,29 +10,20 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-type K8Resources struct {
-	Nodes []*methodk8s.Node `json:"nodes" yaml:"nodes"`
-}
-
-type K8ResourceReport struct {
-	Resources K8Resources `json:"resources" yaml:"resources"`
-	Errors    []string    `json:"errors" yaml:"errors"`
-}
-
-func EnumerateNodes(k8config *rest.Config) (*K8ResourceReport, error) {
-	resources := K8Resources{}
+func EnumerateNodes(k8config *rest.Config) (*methodk8s.NodeReport, error) {
+	resources := methodk8s.NodeReport{}
 	errors := []string{}
 	config := k8config
 
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		errors = append(errors, err.Error())
-		return &K8ResourceReport{Errors: errors}, err
+		return &methodk8s.NodeReport{Errors: errors}, err
 	}
 
 	nodesList, err := clientset.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return &K8ResourceReport{Errors: errors}, err
+		return &methodk8s.NodeReport{Errors: errors}, err
 	}
 
 	nodes := []*methodk8s.Node{}
@@ -57,16 +48,12 @@ func EnumerateNodes(k8config *rest.Config) (*K8ResourceReport, error) {
 		nodes = append(nodes, &nodeInfo)
 	}
 
-	if nodes != nil {
-		resources.Nodes = nodes
+	resources = methodk8s.NodeReport{
+		Nodes:  nodes,
+		Errors: errors,
 	}
 
-	k8ResourceReport := K8ResourceReport{
-		Resources: resources,
-		Errors:    errors,
-	}
-
-	return &k8ResourceReport, nil
+	return &resources, nil
 }
 
 func isNodeReady(node *corev1.Node) bool {

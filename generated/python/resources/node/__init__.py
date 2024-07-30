@@ -2,5 +2,6 @@
 
 from .address import Address
 from .node import Node
+from .node_report import NodeReport
 
-__all__ = ["Address", "Node"]
+__all__ = ["Address", "Node", "NodeReport"]

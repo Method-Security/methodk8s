@@ -2,5 +2,6 @@
 
 from .service import Service
 from .service_port import ServicePort
+from .service_report import ServiceReport
 
-__all__ = ["Service", "ServicePort"]
+__all__ = ["Service", "ServicePort", "ServiceReport"]

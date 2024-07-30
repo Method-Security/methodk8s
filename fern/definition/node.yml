@@ -11,5 +11,9 @@ types:
       instancetype: string
       status: boolean
       addresses: list<Address>
+  NodeReport:
+    properties:
+      Nodes: list<Node>
+      Errors: optional<list<string>>
 
 

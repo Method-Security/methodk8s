@@ -2,26 +2,29 @@
 
 from . import common, ingress, node, pod, service
 from .common import ProtocolTypes
-from .ingress import GatewayInfo, Ingress, IngressInfo, Listener, Rule
-from .node import Address, Node
-from .pod import Container, ContainerPort, Pod, SecurityContext, Status, StatusTypes
-from .service import Service, ServicePort
+from .ingress import Gateway, Ingress, IngressReport, Listener, Rule
+from .node import Address, Node, NodeReport
+from .pod import Container, ContainerPort, Pod, PodReport, SecurityContext, Status, StatusTypes
+from .service import Service, ServicePort, ServiceReport
 
 __all__ = [
     "Address",
     "Container",
     "ContainerPort",
-    "GatewayInfo",
+    "Gateway",
     "Ingress",
-    "IngressInfo",
+    "IngressReport",
     "Listener",
     "Node",
+    "NodeReport",
     "Pod",
+    "PodReport",
     "ProtocolTypes",
     "Rule",
     "SecurityContext",
     "Service",
     "ServicePort",
+    "ServiceReport",
     "Status",
     "StatusTypes",
     "common",

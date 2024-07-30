@@ -5,13 +5,12 @@ import typing
 
 from ...core.datetime_utils import serialize_datetime
 from ...core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
-from .rule import Rule
+from .service import Service
 
 
-class Ingress(pydantic_v1.BaseModel):
-    name: str
-    namespace: str
-    rules: typing.List[Rule]
+class ServiceReport(pydantic_v1.BaseModel):
+    services: typing.List[Service] = pydantic_v1.Field(alias="Services")
+    errors: typing.Optional[typing.List[str]] = pydantic_v1.Field(alias="Errors", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -26,5 +25,7 @@ class Ingress(pydantic_v1.BaseModel):
         )
 
     class Config:
+        allow_population_by_field_name = True
+        populate_by_name = True
         extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

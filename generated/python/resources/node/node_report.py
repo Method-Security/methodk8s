@@ -5,14 +5,12 @@ import typing
 
 from ...core.datetime_utils import serialize_datetime
 from ...core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
-from .listener import Listener
+from .node import Node
 
 
-class GatewayInfo(pydantic_v1.BaseModel):
-    name: str
-    namespace: str
-    instance: str
-    listeners: typing.List[Listener]
+class NodeReport(pydantic_v1.BaseModel):
+    nodes: typing.List[Node] = pydantic_v1.Field(alias="Nodes")
+    errors: typing.Optional[typing.List[str]] = pydantic_v1.Field(alias="Errors", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -27,5 +25,7 @@ class GatewayInfo(pydantic_v1.BaseModel):
         )
 
     class Config:
+        allow_population_by_field_name = True
+        populate_by_name = True
         extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

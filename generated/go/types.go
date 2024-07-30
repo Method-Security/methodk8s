@@ -5,7 +5,6 @@ package methodk8s
 import (
 	json "encoding/json"
 	fmt "fmt"
-
 	core "github.com/method-security/methodk8s/generated/go/core"
 )
 
@@ -49,7 +48,7 @@ func (p ProtocolTypes) Ptr() *ProtocolTypes {
 	return &p
 }
 
-type GatewayInfo struct {
+type Gateway struct {
 	Name      string      `json:"name" url:"name"`
 	Namespace string      `json:"namespace" url:"namespace"`
 	Instance  string      `json:"instance" url:"instance"`
@@ -59,17 +58,17 @@ type GatewayInfo struct {
 	_rawJSON        json.RawMessage
 }
 
-func (g *GatewayInfo) GetExtraProperties() map[string]interface{} {
+func (g *Gateway) GetExtraProperties() map[string]interface{} {
 	return g.extraProperties
 }
 
-func (g *GatewayInfo) UnmarshalJSON(data []byte) error {
-	type unmarshaler GatewayInfo
+func (g *Gateway) UnmarshalJSON(data []byte) error {
+	type unmarshaler Gateway
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*g = GatewayInfo(value)
+	*g = Gateway(value)
 
 	extraProperties, err := core.ExtractExtraProperties(data, *g)
 	if err != nil {
@@ -81,7 +80,7 @@ func (g *GatewayInfo) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (g *GatewayInfo) String() string {
+func (g *Gateway) String() string {
 	if len(g._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(g._rawJSON); err == nil {
 			return value
@@ -94,8 +93,9 @@ func (g *GatewayInfo) String() string {
 }
 
 type Ingress struct {
-	Ingresses []*IngressInfo `json:"ingresses,omitempty" url:"ingresses,omitempty"`
-	Gateways  []*GatewayInfo `json:"gateways,omitempty" url:"gateways,omitempty"`
+	Name      string  `json:"name" url:"name"`
+	Namespace string  `json:"namespace" url:"namespace"`
+	Rules     []*Rule `json:"rules,omitempty" url:"rules,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -135,26 +135,26 @@ func (i *Ingress) String() string {
 	return fmt.Sprintf("%#v", i)
 }
 
-type IngressInfo struct {
-	Name      string  `json:"name" url:"name"`
-	Namespace string  `json:"namespace" url:"namespace"`
-	Rules     []*Rule `json:"rules,omitempty" url:"rules,omitempty"`
+type IngressReport struct {
+	Gateways  []*Gateway `json:"Gateways,omitempty" url:"Gateways,omitempty"`
+	Ingresses []*Ingress `json:"Ingresses,omitempty" url:"Ingresses,omitempty"`
+	Errors    []string   `json:"Errors,omitempty" url:"Errors,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
 }
 
-func (i *IngressInfo) GetExtraProperties() map[string]interface{} {
+func (i *IngressReport) GetExtraProperties() map[string]interface{} {
 	return i.extraProperties
 }
 
-func (i *IngressInfo) UnmarshalJSON(data []byte) error {
-	type unmarshaler IngressInfo
+func (i *IngressReport) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngressReport
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*i = IngressInfo(value)
+	*i = IngressReport(value)
 
 	extraProperties, err := core.ExtractExtraProperties(data, *i)
 	if err != nil {
@@ -166,7 +166,7 @@ func (i *IngressInfo) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (i *IngressInfo) String() string {
+func (i *IngressReport) String() string {
 	if len(i._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
 			return value
@@ -353,6 +353,48 @@ func (n *Node) String() string {
 	return fmt.Sprintf("%#v", n)
 }
 
+type NodeReport struct {
+	Nodes  []*Node  `json:"Nodes,omitempty" url:"Nodes,omitempty"`
+	Errors []string `json:"Errors,omitempty" url:"Errors,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (n *NodeReport) GetExtraProperties() map[string]interface{} {
+	return n.extraProperties
+}
+
+func (n *NodeReport) UnmarshalJSON(data []byte) error {
+	type unmarshaler NodeReport
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NodeReport(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *n)
+	if err != nil {
+		return err
+	}
+	n.extraProperties = extraProperties
+
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NodeReport) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
 type Container struct {
 	Name            string           `json:"name" url:"name"`
 	Image           string           `json:"image" url:"image"`
@@ -473,6 +515,48 @@ func (p *Pod) UnmarshalJSON(data []byte) error {
 }
 
 func (p *Pod) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PodReport struct {
+	Pods   []*Pod   `json:"Pods,omitempty" url:"Pods,omitempty"`
+	Errors []string `json:"Errors,omitempty" url:"Errors,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PodReport) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PodReport) UnmarshalJSON(data []byte) error {
+	type unmarshaler PodReport
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PodReport(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PodReport) String() string {
 	if len(p._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
 			return value
@@ -679,6 +763,48 @@ func (s *ServicePort) UnmarshalJSON(data []byte) error {
 }
 
 func (s *ServicePort) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type ServiceReport struct {
+	Services []*Service `json:"Services,omitempty" url:"Services,omitempty"`
+	Errors   []string   `json:"Errors,omitempty" url:"Errors,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *ServiceReport) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *ServiceReport) UnmarshalJSON(data []byte) error {
+	type unmarshaler ServiceReport
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = ServiceReport(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *ServiceReport) String() string {
 	if len(s._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
 			return value

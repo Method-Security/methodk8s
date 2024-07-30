@@ -14,3 +14,7 @@ types:
       type: string
       managedBy: string
       ports: list<ServicePort>
+  ServiceReport:
+    properties:
+      Services: list<Service>
+      Errors: optional<list<string>>

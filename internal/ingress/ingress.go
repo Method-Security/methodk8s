@@ -10,34 +10,23 @@ import (
 	gatewayclientset "sigs.k8s.io/gateway-api/pkg/client/clientset/versioned"
 )
 
-type K8Resources struct {
-	Ingress *methodk8s.Ingress `json:"ingress" yaml:"ingress"`
-}
-
-type K8ResourceReport struct {
-	Resources K8Resources `json:"resources" yaml:"resources"`
-	Errors    []string    `json:"errors" yaml:"errors"`
-}
-
-func EnumerateIngresses(k8config *rest.Config, onlyGateway bool) (*K8ResourceReport, error) {
-	resources := K8Resources{}
+func EnumerateIngresses(k8config *rest.Config, onlyGateway bool) (*methodk8s.IngressReport, error) {
+	resources := methodk8s.IngressReport{}
 	errors := []string{}
 	config := k8config
 
 	clientset, err := gatewayclientset.NewForConfig(config)
 	if err != nil {
 		errors = append(errors, err.Error())
-		return &K8ResourceReport{Errors: errors}, err
+		return &methodk8s.IngressReport{Errors: errors}, err
 	}
 
 	gatewayList, err := clientset.GatewayV1beta1().Gateways("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		errors = append(errors, err.Error())
-		return &K8ResourceReport{Errors: errors}, err
+		return &methodk8s.IngressReport{Errors: errors}, err
 	}
 
-	ingress := &methodk8s.Ingress{}
-	gateways := []*methodk8s.GatewayInfo{}
+	gateways := []*methodk8s.Gateway{}
 	for _, gateway := range gatewayList.Items {
 		listeners := []*methodk8s.Listener{}
 		for _, listener := range gateway.Spec.Listeners {
@@ -55,7 +44,7 @@ func EnumerateIngresses(k8config *rest.Config, onlyGateway bool) (*K8ResourceRep
 			listeners = append(listeners, &listenerInfo)
 		}
 
-		gatewayInfo := methodk8s.GatewayInfo{
+		gatewayInfo := methodk8s.Gateway{
 			Name:      gateway.GetName(),
 			Namespace: gateway.GetNamespace(),
 			Listeners: listeners,
@@ -63,25 +52,21 @@ func EnumerateIngresses(k8config *rest.Config, onlyGateway bool) (*K8ResourceRep
 		gateways = append(gateways, &gatewayInfo)
 	}
 
-	if gateways != nil {
-		ingress.Gateways = gateways
-	}
-
 	// '--gateway' flag not set
+	ingresses := []*methodk8s.Ingress{}
 	if !onlyGateway {
 		clientset, err := kubernetes.NewForConfig(config)
 		if err != nil {
 			errors = append(errors, err.Error())
-			return &K8ResourceReport{Errors: errors}, err
+			return &methodk8s.IngressReport{Errors: errors}, err
 		}
 
 		ingressList, err := clientset.NetworkingV1().Ingresses("").List(context.TODO(), metav1.ListOptions{})
 		if err != nil {
 			errors = append(errors, err.Error())
-			return &K8ResourceReport{Errors: errors}, err
+			return &methodk8s.IngressReport{Errors: errors}, err
 		}
 
-		ingresses := []*methodk8s.IngressInfo{}
 		for _, ingress := range ingressList.Items {
 			rules := []*methodk8s.Rule{}
 			for _, rule := range ingress.Spec.Rules {
@@ -96,24 +81,20 @@ func EnumerateIngresses(k8config *rest.Config, onlyGateway bool) (*K8ResourceRep
 				}
 			}
 
-			ingressInfo := methodk8s.IngressInfo{
+			ingressInfo := methodk8s.Ingress{
 				Name:      ingress.GetName(),
 				Namespace: ingress.GetNamespace(),
 				Rules:     rules,
 			}
 			ingresses = append(ingresses, &ingressInfo)
 		}
-		if ingresses != nil {
-			ingress.Ingresses = ingresses
-		}
 	}
 
-	resources.Ingress = ingress
-
-	k8ResourceReport := K8ResourceReport{
-		Resources: resources,
+	resources = methodk8s.IngressReport{
+		Gateways:  gateways,
+		Ingresses: ingresses,
 		Errors:    errors,
 	}
 
-	return &k8ResourceReport, nil
+	return &resources, nil
 }

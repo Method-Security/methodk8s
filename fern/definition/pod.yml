@@ -35,3 +35,7 @@ types:
       version: string
       status: Status
       containers: list<Container>
+  PodReport:
+    properties:
+      Pods: list<Pod>
+      Errors: optional<list<string>>

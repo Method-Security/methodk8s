@@ -46,9 +46,14 @@ func (a *MethodK8s) InitRootCommand() {
 	var outputFormat string
 	var outputFile string
 	a.RootCmd = &cobra.Command{
-		Use:          "methodk8s",
-		Short:        "Audit K8 resources",
-		Long:         "Audit K8 resources",
+		Use:   "methodk8s",
+		Short: "Audit K8 resources",
+		Long: `The K8s context is defined in order of:
+		1. The '--path' flag representing the path to a .kube/config file
+		2. $KUBECONFIG which holds the path to a .kube/config file
+		3. The '--url' flag which holds the URL of a potential cluster
+		The '--context' flag can also be used to specfiy the context working with a .kube/config file
+		If nothing is provided an error will be thrown`,
 		SilenceUsage: true,
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			var err error
@@ -110,9 +115,9 @@ func (a *MethodK8s) InitRootCommand() {
 
 	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.Quiet, "quiet", "q", false, "Suppress output")
 	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.Verbose, "verbose", "v", false, "Verbose output")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Context, "context", "c", "", "cluster url")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Path, "path", "p", "", "config path")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Url, "url", "u", "", "cluster url")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Context, "context", "c", "", "Context name")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Path, "path", "p", "", "Config path")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Url, "url", "u", "", "Cluster url")
 	a.RootCmd.PersistentFlags().StringVarP(&outputFile, "output-file", "f", "", "Path to output file. If blank, will output to STDOUT")
 	a.RootCmd.PersistentFlags().StringVarP(&outputFormat, "output", "o", "signal", "Output format (signal, json, yaml). Default value is signal")
 

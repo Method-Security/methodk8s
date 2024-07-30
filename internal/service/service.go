@@ -9,29 +9,20 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-type K8Resources struct {
-	Services []*methodk8s.Service `json:"services" yaml:"services"`
-}
-
-type K8ResourceReport struct {
-	Resources K8Resources `json:"resources" yaml:"resources"`
-	Errors    []string    `json:"errors" yaml:"errors"`
-}
-
-func EnumerateServices(k8config *rest.Config) (*K8ResourceReport, error) {
-	resources := K8Resources{}
+func EnumerateServices(k8config *rest.Config) (*methodk8s.ServiceReport, error) {
+	resources := methodk8s.ServiceReport{}
 	errors := []string{}
 	config := k8config
 
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		errors = append(errors, err.Error())
-		return &K8ResourceReport{Errors: errors}, err
+		return &methodk8s.ServiceReport{Errors: errors}, err
 	}
 
 	servicesList, err := clientset.CoreV1().Services("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return &K8ResourceReport{Errors: errors}, err
+		return &methodk8s.ServiceReport{Errors: errors}, err
 	}
 
 	services := []*methodk8s.Service{}
@@ -63,14 +54,10 @@ func EnumerateServices(k8config *rest.Config) (*K8ResourceReport, error) {
 		services = append(services, &serviceInfo)
 	}
 
-	if services != nil {
-		resources.Services = services
+	resources = methodk8s.ServiceReport{
+		Services: services,
+		Errors:   errors,
 	}
 
-	k8ResourceReport := K8ResourceReport{
-		Resources: resources,
-		Errors:    errors,
-	}
-
-	return &k8ResourceReport, nil
+	return &resources, nil
 }

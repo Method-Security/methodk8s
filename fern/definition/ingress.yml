@@ -7,7 +7,7 @@ types:
       path: string
       serviceName: string
       servicePort: integer
-  IngressInfo:
+  Ingress:
     properties:
       name: string
       namespace: string
@@ -17,13 +17,14 @@ types:
       name: string
       port: integer
       protocol: common.ProtocolTypes
-  GatewayInfo:
+  Gateway:
     properties:
       name: string
       namespace: string
       instance: string
       listeners: list<Listener>
-  Ingress:
+  IngressReport:
     properties:
-      ingresses: list<IngressInfo>
-      gateways: list<GatewayInfo>
+      Gateways: list<Gateway>
+      Ingresses: optional<list<Ingress>>
+      Errors: optional<list<string>>

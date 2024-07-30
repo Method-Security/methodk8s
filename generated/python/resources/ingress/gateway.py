@@ -5,13 +5,14 @@ import typing
 
 from ...core.datetime_utils import serialize_datetime
 from ...core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
-from .rule import Rule
+from .listener import Listener
 
 
-class Ingress(pydantic_v1.BaseModel):
+class Gateway(pydantic_v1.BaseModel):
     name: str
     namespace: str
-    rules: typing.List[Rule]
+    instance: str
+    listeners: typing.List[Listener]
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
