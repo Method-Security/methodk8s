@@ -6,5 +6,6 @@ type RootFlags struct {
 	Context string
 	Path    string
 	URL     string
+	Secret  bool
 	Output  string
 }

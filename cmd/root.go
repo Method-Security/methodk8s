@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"errors"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -34,6 +36,7 @@ func NewMethodK8s(version string) *MethodK8s {
 			Context: "",
 			Path:    "",
 			URL:     "",
+			Secret:  false,
 		},
 		OutputConfig: writer.NewOutputConfig(nil, writer.NewFormat(writer.SIGNAL)),
 		OutputSignal: signal.NewSignal(nil, datetime.DateTime(time.Now()), nil, 0, nil),
@@ -74,7 +77,26 @@ func (a *MethodK8s) InitRootCommand() {
 			context := a.RootFlags.Context
 
 			var k8Config *rest.Config
-			if a.RootFlags.Path != "" {
+			if a.RootFlags.Secret {
+				token := os.Getenv("SERVICE_ACCOUNT_TOKEN")
+				apiServer := os.Getenv("SERVER_API")
+				caString := os.Getenv("CA_CERT")
+				caFilePath := "ca.crt"
+
+				dir := filepath.Dir(caFilePath)
+				if err := os.MkdirAll(dir, 0755); err != nil {
+					return err
+				}
+
+				if err := ioutil.WriteFile(caFilePath, []byte(caString), 0644); err != nil {
+					return err
+				}
+
+				k8Config, err = MakeConfigFromSecret(token, caFilePath, apiServer)
+				if err != nil {
+					return err
+				}
+			} else if a.RootFlags.Path != "" {
 				k8ConfigPath := a.RootFlags.Path
 				k8Config, err = MakeConfigFromPath(k8ConfigPath, context)
 				if err != nil {
@@ -118,6 +140,7 @@ func (a *MethodK8s) InitRootCommand() {
 	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Context, "context", "c", "", "Name of Context you want to use (ie. minikube)")
 	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Path, "path", "p", "", "Absolute or relative path to the Config file (ie. ~/.kube/config)")
 	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.URL, "url", "u", "", "Cluster URL (ie. mycluster.com)")
+	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.Secret, "secret", "s", false, "Set to true if you want to use a token, CA, and URL to authenticate")
 	a.RootCmd.PersistentFlags().StringVarP(&outputFile, "output-file", "f", "", "Path to output file. If blank, will output to STDOUT")
 	a.RootCmd.PersistentFlags().StringVarP(&outputFormat, "output", "o", "signal", "Output format (signal, json, yaml). Default value is signal")
 
@@ -152,6 +175,18 @@ func validateOutputFormat(output string) (writer.Format, error) {
 		return writer.Format{}, errors.New("invalid output format. Valid formats are: json, yaml, signal")
 	}
 	return writer.NewFormat(format), nil
+}
+
+// MakeConfigFromSecret generates the k8s config object from a secret, ca file, and api server (For Greg use only)
+func MakeConfigFromSecret(token string, caFile string, apiServer string) (*rest.Config, error) {
+	k8Config := &rest.Config{
+		Host: apiServer,
+		TLSClientConfig: rest.TLSClientConfig{
+			CAFile: caFile,
+		},
+		BearerToken: token,
+	}
+	return k8Config, nil
 }
 
 // MakeConfigFromURL generates the k8s config object from a k8s cluster URL

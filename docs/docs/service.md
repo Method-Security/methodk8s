@@ -25,7 +25,7 @@ Flags:
   -h, --help       help for enumerate
 
 Global Flags:
-  -c, --context string       cluster url
+  -c, --context string       cluster context
   -o, --output string        Output format (signal, json, yaml). Default value is signal (default "signal")
   -f, --output-file string   Path to output file. If blank, will output to STDOUT
   -p, --path string          config path

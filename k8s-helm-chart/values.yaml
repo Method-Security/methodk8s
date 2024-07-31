@@ -1,0 +1,6 @@
+# Default values for method-service-account-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+serviceAccount:
+  name: method-service-account
+namespace: default
