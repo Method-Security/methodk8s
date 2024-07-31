@@ -1,0 +1,20 @@
+imports:
+  common: ./common.yml
+types:
+  ServicePort:
+    properties:
+      name: string
+      protocol: common.ProtocolTypes
+      port: integer
+      targetPort: string
+  Service: 
+    properties:
+      name: string
+      namespace: string
+      type: string
+      managedBy: string
+      ports: list<ServicePort>
+  ServiceReport:
+    properties:
+      Services: list<Service>
+      Errors: optional<list<string>>

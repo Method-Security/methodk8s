@@ -1,0 +1,19 @@
+types:
+  Address:
+    properties:
+      type: string
+      address: string
+  Node:
+    properties:
+      name: string
+      arch: string
+      os: string
+      instancetype: string
+      status: boolean
+      addresses: list<Address>
+  NodeReport:
+    properties:
+      Nodes: list<Node>
+      Errors: optional<list<string>>
+
+

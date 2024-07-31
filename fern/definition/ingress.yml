@@ -1,0 +1,30 @@
+imports:
+  common: ./common.yml
+types:
+  Rule:
+    properties:
+      host: string
+      path: string
+      serviceName: string
+      servicePort: integer
+  Ingress:
+    properties:
+      name: string
+      namespace: string
+      rules: list<Rule>
+  Listener:
+    properties:
+      name: string
+      port: integer
+      protocol: common.ProtocolTypes
+  Gateway:
+    properties:
+      name: string
+      namespace: string
+      instance: string
+      listeners: list<Listener>
+  IngressReport:
+    properties:
+      Gateways: list<Gateway>
+      Ingresses: optional<list<Ingress>>
+      Errors: optional<list<string>>
