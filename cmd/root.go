@@ -52,9 +52,10 @@ func (a *MethodK8s) InitRootCommand() {
 		Use:   "methodk8s",
 		Short: "Audit K8 resources",
 		Long: `The K8s context is defined in order of:
-		1. The '--path' flag representing the path to a .kube/config file
-		2. $KUBECONFIG which holds the path to a .kube/config file
-		3. The '--url' flag which holds the URL of a potential cluster
+		1. The '--secret' flag which holds needs the account token, CA, and URL set as ENVs
+		2.The '--path' flag representing the path to a .kube/config file
+		3. $KUBECONFIG which holds the path to a .kube/config file
+		4. The '--url' flag which holds the URL of a potential cluster
 		The '--context' flag can also be used to specfiy the context working with a .kube/config file
 		If nothing is provided an error will be thrown`,
 		SilenceUsage: true,
