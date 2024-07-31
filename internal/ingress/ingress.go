@@ -11,12 +11,10 @@ import (
 	gatewayclientset "sigs.k8s.io/gateway-api/pkg/client/clientset/versioned"
 )
 
-func EnumerateIngresses(k8config *rest.Config, objects string) (*methodk8s.IngressReport, error) {
+func EnumerateIngresses(k8config *rest.Config, types []string) (*methodk8s.IngressReport, error) {
 	resources := methodk8s.IngressReport{}
 	errors := []string{}
 	config := k8config
-
-	objectList := strings.Split(objects, ",")
 
 	clientset, err := gatewayclientset.NewForConfig(config)
 	if err != nil {
@@ -30,7 +28,7 @@ func EnumerateIngresses(k8config *rest.Config, objects string) (*methodk8s.Ingre
 	}
 
 	gateways := []*methodk8s.Gateway{}
-	if contains(objectList, "gateway") {
+	if contains(types, "gateway") || len(types) == 0 {
 		for _, gateway := range gatewayList.Items {
 			listeners := []*methodk8s.Listener{}
 			for _, listener := range gateway.Spec.Listeners {
@@ -58,7 +56,7 @@ func EnumerateIngresses(k8config *rest.Config, objects string) (*methodk8s.Ingre
 	}
 
 	ingresses := []*methodk8s.Ingress{}
-	if contains(objectList, "ingress") {
+	if contains(types, "ingress") || len(types) == 0 {
 		clientset, err := kubernetes.NewForConfig(config)
 		if err != nil {
 			errors = append(errors, err.Error())

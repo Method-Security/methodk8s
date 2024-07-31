@@ -5,6 +5,6 @@ type RootFlags struct {
 	Verbose bool
 	Context string
 	Path    string
-	Url     string
+	URL     string
 	Output  string
 }

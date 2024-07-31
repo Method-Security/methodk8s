@@ -33,7 +33,7 @@ func NewMethodK8s(version string) *MethodK8s {
 			Verbose: false,
 			Context: "",
 			Path:    "",
-			Url:     "",
+			URL:     "",
 		},
 		OutputConfig: writer.NewOutputConfig(nil, writer.NewFormat(writer.SIGNAL)),
 		OutputSignal: signal.NewSignal(nil, datetime.DateTime(time.Now()), nil, 0, nil),
@@ -73,7 +73,7 @@ func (a *MethodK8s) InitRootCommand() {
 
 			context := a.RootFlags.Context
 
-			var k8Config *rest.Config = nil
+			var k8Config *rest.Config
 			if a.RootFlags.Path != "" {
 				k8ConfigPath := a.RootFlags.Path
 				k8Config, err = MakeConfigFromPath(k8ConfigPath, context)
@@ -86,9 +86,9 @@ func (a *MethodK8s) InitRootCommand() {
 				if err != nil {
 					return err
 				}
-			} else if a.RootFlags.Url != "" {
-				k8ConfigUrl := a.RootFlags.Url
-				k8Config = MakeConfigFromUrl(k8ConfigUrl)
+			} else if a.RootFlags.URL != "" {
+				k8ConfigURL := a.RootFlags.URL
+				k8Config = MakeConfigFromURL(k8ConfigURL)
 			} else {
 				err := errors.New("please provide either a path to a config file, " +
 					"assign $KUBECONFIG to the config file path, " +
@@ -115,9 +115,9 @@ func (a *MethodK8s) InitRootCommand() {
 
 	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.Quiet, "quiet", "q", false, "Suppress output")
 	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.Verbose, "verbose", "v", false, "Verbose output")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Context, "context", "c", "", "Name of context (ie. minikube)")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Path, "path", "p", "", "Absolute or relative path to the config file (ie. ~/.kube/config)")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Url, "url", "u", "", "The cluster url (ie. mycluster.com)")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Context, "context", "c", "", "Name of Context you want to use (ie. minikube)")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Path, "path", "p", "", "Absolute or relative path to the Config file (ie. ~/.kube/config)")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.URL, "url", "u", "", "Cluster URL (ie. mycluster.com)")
 	a.RootCmd.PersistentFlags().StringVarP(&outputFile, "output-file", "f", "", "Path to output file. If blank, will output to STDOUT")
 	a.RootCmd.PersistentFlags().StringVarP(&outputFormat, "output", "o", "signal", "Output format (signal, json, yaml). Default value is signal")
 
@@ -154,14 +154,14 @@ func validateOutputFormat(output string) (writer.Format, error) {
 	return writer.NewFormat(format), nil
 }
 
-// Generates the k8s config object from a k8s cluster Url
-func MakeConfigFromUrl(clusterUrl string) *rest.Config {
+// MakeConfigFromURL generates the k8s config object from a k8s cluster URL
+func MakeConfigFromURL(clusterURL string) *rest.Config {
 	return &rest.Config{
-		Host: clusterUrl,
+		Host: clusterURL,
 	}
 }
 
-// Generates the k8s config object from a path to a config file
+// MakeConfigFromPath generates the k8s config object from a path to a config file
 func MakeConfigFromPath(configPath string, context string) (*rest.Config, error) {
 	loadingRules := &clientcmd.ClientConfigLoadingRules{ExplicitPath: configPath}
 	configOverrides := &clientcmd.ConfigOverrides{}
