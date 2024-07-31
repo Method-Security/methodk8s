@@ -37,5 +37,5 @@ types:
       containers: list<Container>
   PodReport:
     properties:
-      Pods: list<Pod>
-      Errors: optional<list<string>>
+      pods: optional<list<Pod>>
+      errors: optional<list<string>>

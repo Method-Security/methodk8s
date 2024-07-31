@@ -16,5 +16,5 @@ types:
       ports: list<ServicePort>
   ServiceReport:
     properties:
-      Services: list<Service>
-      Errors: optional<list<string>>
+      services: optional<list<Service>>
+      errors: optional<list<string>>

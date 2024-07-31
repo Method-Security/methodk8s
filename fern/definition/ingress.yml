@@ -25,6 +25,6 @@ types:
       listeners: list<Listener>
   IngressReport:
     properties:
-      Gateways: list<Gateway>
-      Ingresses: optional<list<Ingress>>
+      gateways: optional<list<Gateway>>
+      ingresses: optional<list<Ingress>>
       Errors: optional<list<string>>

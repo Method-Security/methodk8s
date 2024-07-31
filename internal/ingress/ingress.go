@@ -2,6 +2,7 @@ package ingress
 
 import (
 	"context"
+	"strings"
 
 	methodk8s "github.com/method-security/methodk8s/generated/go"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -10,10 +11,12 @@ import (
 	gatewayclientset "sigs.k8s.io/gateway-api/pkg/client/clientset/versioned"
 )
 
-func EnumerateIngresses(k8config *rest.Config, onlyGateway bool) (*methodk8s.IngressReport, error) {
+func EnumerateIngresses(k8config *rest.Config, objects string) (*methodk8s.IngressReport, error) {
 	resources := methodk8s.IngressReport{}
 	errors := []string{}
 	config := k8config
+
+	objectList := strings.Split(objects, ",")
 
 	clientset, err := gatewayclientset.NewForConfig(config)
 	if err != nil {
@@ -27,34 +30,35 @@ func EnumerateIngresses(k8config *rest.Config, onlyGateway bool) (*methodk8s.Ing
 	}
 
 	gateways := []*methodk8s.Gateway{}
-	for _, gateway := range gatewayList.Items {
-		listeners := []*methodk8s.Listener{}
-		for _, listener := range gateway.Spec.Listeners {
-			protocol, err := methodk8s.NewProtocolTypesFromString(string(listener.Protocol))
+	if contains(objectList, "gateway") {
+		for _, gateway := range gatewayList.Items {
+			listeners := []*methodk8s.Listener{}
+			for _, listener := range gateway.Spec.Listeners {
+				protocol, err := methodk8s.NewProtocolTypesFromString(string(listener.Protocol))
 
-			if err != nil {
-				errors = append(errors, err.Error())
-				protocol, _ = methodk8s.NewProtocolTypesFromString("UNKNOWN")
+				if err != nil {
+					errors = append(errors, err.Error())
+					protocol, _ = methodk8s.NewProtocolTypesFromString("UNKNOWN")
+				}
+				listenerInfo := methodk8s.Listener{
+					Name:     string(listener.Name),
+					Port:     int(listener.Port),
+					Protocol: protocol,
+				}
+				listeners = append(listeners, &listenerInfo)
 			}
-			listenerInfo := methodk8s.Listener{
-				Name:     string(listener.Name),
-				Port:     int(listener.Port),
-				Protocol: protocol,
-			}
-			listeners = append(listeners, &listenerInfo)
-		}
 
-		gatewayInfo := methodk8s.Gateway{
-			Name:      gateway.GetName(),
-			Namespace: gateway.GetNamespace(),
-			Listeners: listeners,
+			gatewayInfo := methodk8s.Gateway{
+				Name:      gateway.GetName(),
+				Namespace: gateway.GetNamespace(),
+				Listeners: listeners,
+			}
+			gateways = append(gateways, &gatewayInfo)
 		}
-		gateways = append(gateways, &gatewayInfo)
 	}
 
-	// '--gateway' flag not set
 	ingresses := []*methodk8s.Ingress{}
-	if !onlyGateway {
+	if contains(objectList, "ingress") {
 		clientset, err := kubernetes.NewForConfig(config)
 		if err != nil {
 			errors = append(errors, err.Error())
@@ -97,4 +101,13 @@ func EnumerateIngresses(k8config *rest.Config, onlyGateway bool) (*methodk8s.Ing
 	}
 
 	return &resources, nil
+}
+
+func contains(slice []string, item string) bool {
+	for _, v := range slice {
+		if strings.EqualFold(v, item) {
+			return true
+		}
+	}
+	return false
 }

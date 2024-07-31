@@ -115,9 +115,9 @@ func (a *MethodK8s) InitRootCommand() {
 
 	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.Quiet, "quiet", "q", false, "Suppress output")
 	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.Verbose, "verbose", "v", false, "Verbose output")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Context, "context", "c", "", "Context name")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Path, "path", "p", "", "Config path")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Url, "url", "u", "", "Cluster url")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Context, "context", "c", "", "Name of context (ie. minikube)")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Path, "path", "p", "", "Absolute or relative path to the config file (ie. ~/.kube/config)")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Url, "url", "u", "", "The cluster url (ie. mycluster.com)")
 	a.RootCmd.PersistentFlags().StringVarP(&outputFile, "output-file", "f", "", "Path to output file. If blank, will output to STDOUT")
 	a.RootCmd.PersistentFlags().StringVarP(&outputFormat, "output", "o", "signal", "Output format (signal, json, yaml). Default value is signal")
 
