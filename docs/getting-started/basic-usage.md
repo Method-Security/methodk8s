@@ -17,7 +17,7 @@ Running an authenticated workflow with methodk8s as a Docker container requires 
 
 ```bash
 helm install my-release ./k8s-helm-chart
-docker run -e SERVICE_ACCOUNT_TOKEN="XXXX" -e SERVER_API="https://ClusterURL.com" -e CA_CERT="XXXX" methodsecurity/methodk8s
+docker run -e SERVICE_ACCOUNT_TOKEN="XXXX" -e SERVER_URL="https://ClusterURL.com" -e CA_CERT="XXXX" methodsecurity/methodk8s
 ```
 
 2. By mounting the k8s config file
