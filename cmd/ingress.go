@@ -19,6 +19,7 @@ func (a *MethodK8s) InitIngressCommand() {
 		Short: "Enumerate Ingresses",
 		Long:  `Enumerate Ingresses`,
 		Run: func(cmd *cobra.Command, args []string) {
+
 			types, err := cmd.Flags().GetStringSlice("types")
 			if err != nil {
 				errorMessage := err.Error()
@@ -29,6 +30,7 @@ func (a *MethodK8s) InitIngressCommand() {
 
 			ctx := context.Background()
 			report, err := ingress.EnumerateIngresses(ctx, a.K8Config, types)
+
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
