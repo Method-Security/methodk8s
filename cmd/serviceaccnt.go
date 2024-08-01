@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"context"
+	"fmt"
+
 	serivceAccount "github.com/method-security/methodk8s/internal/serviceaccount"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +21,8 @@ func (a *MethodK8s) InitServiceAccountCommand() {
 		Short: "Service account credentials",
 		Long:  `Use this command to print to console the service account credentials`,
 		Run: func(cmd *cobra.Command, args []string) {
-			err := serivceAccount.PrintCredentials(a.K8Config)
+			ctx := context.Background()
+			err := serivceAccount.PrintCredentials(ctx, a.K8Config)
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
@@ -26,23 +30,36 @@ func (a *MethodK8s) InitServiceAccountCommand() {
 			}
 			a.OutputSignal.Content = nil
 		},
+		PersistentPostRunE: func(cmd *cobra.Command, _ []string) error {
+			return nil
+		},
 	}
-	applyCmd := &cobra.Command{
-		Use:   "apply",
+	var apply bool
+	var namespace string
+	configureCmd := &cobra.Command{
+		Use:   "config",
 		Short: "Set up service account in k8s cluster",
 		Long:  `Set up service account in k8s cluster`,
 		Run: func(cmd *cobra.Command, args []string) {
-			err := serivceAccount.ApplyServiceAccountConfig(a.K8Config)
+			ctx := context.Background()
+			err := serivceAccount.Config(ctx, a.K8Config, apply, namespace)
 			if err != nil {
+				fmt.Println(err)
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
 				a.OutputSignal.Status = 1
 			}
 			a.OutputSignal.Content = nil
 		},
+		PersistentPostRunE: func(cmd *cobra.Command, _ []string) error {
+			return nil
+		},
 	}
 
+	configureCmd.Flags().BoolVar(&apply, "apply", false, "Apply the Service Account yamls")
+	configureCmd.Flags().StringVar(&namespace, "namespace", "default", "Set the namespace for the Service Account and Secret")
+
 	serviceAccountCmd.AddCommand(credentialsCmd)
-	serviceAccountCmd.AddCommand(applyCmd)
+	serviceAccountCmd.AddCommand(configureCmd)
 	a.RootCmd.AddCommand(serviceAccountCmd)
 }

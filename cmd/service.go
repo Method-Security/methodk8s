@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/method-security/methodk8s/internal/service"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +19,8 @@ func (a *MethodK8s) InitServiceCommand() {
 		Short: "Enumerate Services",
 		Long:  `Enumerate Services`,
 		Run: func(cmd *cobra.Command, args []string) {
-			report, err := service.EnumerateServices(a.K8Config)
+			ctx := context.Background()
+			report, err := service.EnumerateServices(ctx, a.K8Config)
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage

@@ -197,9 +197,17 @@ func GetK8Config(a *MethodK8s) (*rest.Config, error) {
 func CreateConfigFromServiceAccountCreds(tokenFlag string, caCertFlag string, urlFlag string) (*rest.Config, error) {
 	var err error
 
-	token := tokenFlag
-	if token == "" {
-		token = os.Getenv("TOKEN")
+	var token []byte
+	if tokenFlag != "" {
+		token, err = base64.StdEncoding.DecodeString(tokenFlag)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		token, err = base64.StdEncoding.DecodeString(os.Getenv("TOKEN"))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var caCert []byte
@@ -226,7 +234,7 @@ func CreateConfigFromServiceAccountCreds(tokenFlag string, caCertFlag string, ur
 			TLSClientConfig: rest.TLSClientConfig{
 				CAData: caCert,
 			},
-			BearerToken: token,
+			BearerToken: string(token),
 		}, nil
 	}
 	return &rest.Config{
@@ -234,7 +242,7 @@ func CreateConfigFromServiceAccountCreds(tokenFlag string, caCertFlag string, ur
 		TLSClientConfig: rest.TLSClientConfig{
 			Insecure: true, // Disable TLS verification
 		},
-		BearerToken: token,
+		BearerToken: string(token),
 	}, nil
 }
 

@@ -10,7 +10,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func EnumeratePods(k8config *rest.Config) (*methodk8s.PodReport, error) {
+func EnumeratePods(ctx context.Context, k8config *rest.Config) (*methodk8s.PodReport, error) {
 	resources := methodk8s.PodReport{}
 	errors := []string{}
 	config := k8config

@@ -10,7 +10,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func EnumerateNodes(k8config *rest.Config) (*methodk8s.NodeReport, error) {
+func EnumerateNodes(ctx context.Context, k8config *rest.Config) (*methodk8s.NodeReport, error) {
 	resources := methodk8s.NodeReport{}
 	errors := []string{}
 	config := k8config
@@ -21,7 +21,7 @@ func EnumerateNodes(k8config *rest.Config) (*methodk8s.NodeReport, error) {
 		return &methodk8s.NodeReport{Errors: errors}, err
 	}
 
-	nodesList, err := clientset.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+	nodesList, err := clientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return &methodk8s.NodeReport{Errors: errors}, err
 	}
