@@ -16,13 +16,15 @@ func (a *MethodK8s) InitServiceAccountCommand() {
 		Long:  `Service Account setup and config`,
 	}
 
+	var namespace string
+	var apply bool
 	credentialsCmd := &cobra.Command{
 		Use:   "creds",
 		Short: "Service account credentials",
 		Long:  `Use this command to print to console the service account credentials`,
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
-			err := serivceAccount.PrintCredentials(ctx, a.K8Config)
+			err := serivceAccount.PrintCredentials(ctx, a.K8Config, namespace)
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
@@ -34,8 +36,6 @@ func (a *MethodK8s) InitServiceAccountCommand() {
 			return nil
 		},
 	}
-	var apply bool
-	var namespace string
 	configureCmd := &cobra.Command{
 		Use:   "config",
 		Short: "Set up service account in k8s cluster",
@@ -56,6 +56,7 @@ func (a *MethodK8s) InitServiceAccountCommand() {
 		},
 	}
 
+	credentialsCmd.Flags().StringVar(&namespace, "namespace", "default", "Set the namespace for the Service Account and Secret")
 	configureCmd.Flags().BoolVar(&apply, "apply", false, "Apply the Service Account yamls")
 	configureCmd.Flags().StringVar(&namespace, "namespace", "default", "Set the namespace for the Service Account and Secret")
 

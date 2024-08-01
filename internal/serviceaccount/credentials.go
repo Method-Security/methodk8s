@@ -10,9 +10,8 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func PrintCredentials(ctx context.Context, k8config *rest.Config) error {
+func PrintCredentials(ctx context.Context, k8config *rest.Config, namespace string) error {
 	secretName := "method-service-account-secret"
-	namespace := "default"
 
 	// Create the Kubernetes clientset
 	clientset, err := kubernetes.NewForConfig(k8config)
