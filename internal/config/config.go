@@ -1,14 +1,21 @@
 package config
 
-type RootFlags struct {
-	Quiet          bool
-	Verbose        bool
-	Context        string
-	Path           string
-	URL            string
+type ServiceAccountConfig struct {
 	ServiceAccount bool
 	Token          string
 	CACert         string
 	APIServerURL   string
-	Output         string
+}
+
+type OtherConfig struct {
+	Context string
+	Path    string
+	URL     string
+}
+
+type RootFlags struct {
+	Quiet                bool
+	Verbose              bool
+	ServiceAccountConfig ServiceAccountConfig
+	OtherConfig          OtherConfig
 }

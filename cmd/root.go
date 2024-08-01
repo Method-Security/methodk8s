@@ -30,15 +30,19 @@ func NewMethodK8s(version string) *MethodK8s {
 	methodK8s := MethodK8s{
 		version: version,
 		RootFlags: config.RootFlags{
-			Quiet:          false,
-			Verbose:        false,
-			Context:        "",
-			Path:           "",
-			URL:            "",
-			ServiceAccount: false,
-			Token:          "",
-			CACert:         "",
-			APIServerURL:   "",
+			Quiet:   false,
+			Verbose: false,
+			ServiceAccountConfig: config.ServiceAccountConfig{
+				ServiceAccount: false,
+				Token:          "",
+				CACert:         "",
+				APIServerURL:   "",
+			},
+			OtherConfig: config.OtherConfig{
+				Context: "",
+				Path:    "",
+				URL:     "",
+			},
 		},
 		OutputConfig: writer.NewOutputConfig(nil, writer.NewFormat(writer.SIGNAL)),
 		OutputSignal: signal.NewSignal(nil, datetime.DateTime(time.Now()), nil, 0, nil),
@@ -75,78 +79,12 @@ func (a *MethodK8s) InitRootCommand() {
 			a.OutputConfig = writer.NewOutputConfig(outputFilePointer, format)
 			cmd.SetContext(svc1log.WithLogger(cmd.Context(), config.InitializeLogging(cmd, &a.RootFlags)))
 
-			context := a.RootFlags.Context
-
-			var k8Config *rest.Config
-			if a.RootFlags.ServiceAccount {
-
-				// Get Token
-				var token []byte
-				if a.RootFlags.Token != "" {
-					token, err = base64.StdEncoding.DecodeString(a.RootFlags.Token)
-					if err != nil {
-						return err
-					}
-				} else {
-					token, err = base64.StdEncoding.DecodeString(os.Getenv("TOKEN"))
-					if err != nil {
-						return err
-					}
-				}
-
-				// Get CA certificate
-				var caCert []byte
-				if a.RootFlags.CACert != "" {
-					caCert, err = base64.StdEncoding.DecodeString(a.RootFlags.CACert)
-					if err != nil {
-						return err
-					}
-				} else {
-					caCert, err = base64.StdEncoding.DecodeString(os.Getenv("CA_CERT"))
-					if err != nil {
-						return err
-					}
-				}
-
-				// Get API Server URL
-				var apiServerURL string
-				if a.RootFlags.APIServerURL != "" {
-					apiServerURL = a.RootFlags.APIServerURL
-				} else {
-					apiServerURL = os.Getenv("API_SERVER")
-					if err != nil {
-						return err
-					}
-				}
-
-				k8Config, err = MakeConfigFromSecret(string(token), caCert, apiServerURL)
-				if err != nil {
-					return err
-				}
-			} else if a.RootFlags.Path != "" {
-				k8ConfigPath := a.RootFlags.Path
-				k8Config, err = MakeConfigFromPath(k8ConfigPath, context)
-				if err != nil {
-					return err
-				}
-			} else if kubeEnv, exists := os.LookupEnv("KUBECONFIG"); exists && kubeEnv != "" {
-				k8ConfigPath := os.Getenv("KUBECONFIG")
-				k8Config, err = MakeConfigFromPath(k8ConfigPath, context)
-				if err != nil {
-					return err
-				}
-			} else if a.RootFlags.URL != "" {
-				k8ConfigURL := a.RootFlags.URL
-				k8Config = MakeConfigFromURL(k8ConfigURL)
-			} else {
-				err := errors.New("please provide either: " +
-					"a path to a config file, " +
-					"assign $KUBECONFIG to the config file path, " +
-					"or provide a URL to the cluster")
+			k8Config, err := GetK8Config(a)
+			if err != nil {
 				return err
 			}
-
 			a.K8Config = k8Config
+
 			return nil
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, _ []string) error {
@@ -163,18 +101,24 @@ func (a *MethodK8s) InitRootCommand() {
 		},
 	}
 
+	// Standard flags
 	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.Quiet, "quiet", "q", false, "Suppress output")
 	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.Verbose, "verbose", "v", false, "Verbose output")
+	a.RootCmd.PersistentFlags().StringVarP(&outputFile, "output-file", "f", "", "Path to output file. If blank, will output to STDOUT")
+	a.RootCmd.PersistentFlags().StringVarP(&outputFormat, "output", "o", "signal", "Output format (signal, json, yaml). Default value is signal")
 
-	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.ServiceAccount, "service-account", "s", false, "Set to true if using service account workflow")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Token, "token", "t", "", "Base64 encoded service account token")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.CACert, "cert", "a", "", "Base64 encoded ca certificate")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.APIServerURL, "server-url", "e", "", "Cluster server url")
+	// ServiceAccountConfig flags
+	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.ServiceAccountConfig.ServiceAccount, "service-account", "s", false, "Set to true if using service account workflow")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.ServiceAccountConfig.Token, "token", "t", "", "Service account token")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.ServiceAccountConfig.CACert, "cert", "a", "", "Base64 encoded ca certificate")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.ServiceAccountConfig.APIServerURL, "server-url", "e", "", "Cluster server url")
 
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Context, "context", "c", "", "Cluster context (ie. minikube)")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.Path, "path", "p", "", "Absolute or relative path to the config file (ie. ~/.kube/config)")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.URL, "url", "u", "", "Cluster url (ie. mycluster.com)")
+	// OtherConfig flags
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.OtherConfig.Context, "context", "c", "", "Cluster context (ie. minikube)")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.OtherConfig.Path, "path", "p", "", "Absolute or relative path to the config file (ie. ~/.kube/config)")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.OtherConfig.URL, "url", "u", "", "Cluster url (ie. mycluster.com)")
 
+	// Flag rules
 	a.RootCmd.MarkFlagsMutuallyExclusive("context", "service-account")
 	a.RootCmd.MarkFlagsMutuallyExclusive("context", "token")
 	a.RootCmd.MarkFlagsMutuallyExclusive("context", "cert")
@@ -187,9 +131,6 @@ func (a *MethodK8s) InitRootCommand() {
 	a.RootCmd.MarkFlagsMutuallyExclusive("url", "token")
 	a.RootCmd.MarkFlagsMutuallyExclusive("url", "cert")
 	a.RootCmd.MarkFlagsMutuallyExclusive("url", "server-url")
-
-	a.RootCmd.PersistentFlags().StringVarP(&outputFile, "output-file", "f", "", "Path to output file. If blank, will output to STDOUT")
-	a.RootCmd.PersistentFlags().StringVarP(&outputFormat, "output", "o", "signal", "Output format (signal, json, yaml). Default value is signal")
 
 	versionCmd := &cobra.Command{
 		Use:   "version",
@@ -222,6 +163,81 @@ func validateOutputFormat(output string) (writer.Format, error) {
 		return writer.Format{}, errors.New("invalid output format. Valid formats are: json, yaml, signal")
 	}
 	return writer.NewFormat(format), nil
+}
+
+// Helper function to get the k8s config object
+func GetK8Config(a *MethodK8s) (*rest.Config, error) {
+	if a.RootFlags.ServiceAccountConfig.ServiceAccount {
+		var err error
+
+		// Get Token
+		var token string
+		if a.RootFlags.ServiceAccountConfig.Token != "" {
+			token = a.RootFlags.ServiceAccountConfig.Token
+		} else {
+			token = os.Getenv("TOKEN")
+		}
+
+		// Get CA Certificate
+		var caCert []byte
+		if a.RootFlags.ServiceAccountConfig.CACert != "" {
+			caCert, err = base64.StdEncoding.DecodeString(a.RootFlags.ServiceAccountConfig.CACert)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			caCert, err = base64.StdEncoding.DecodeString(os.Getenv("CA_CERT"))
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		// Get API Server URL
+		var apiServerURL string
+		if a.RootFlags.ServiceAccountConfig.APIServerURL != "" {
+			apiServerURL = a.RootFlags.ServiceAccountConfig.APIServerURL
+		} else {
+			apiServerURL = os.Getenv("API_SERVER")
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		k8Config, err := MakeConfigFromSecret(string(token), caCert, apiServerURL)
+		if err != nil {
+			return nil, err
+		}
+		return k8Config, nil
+
+	} else if a.RootFlags.OtherConfig.Path != "" {
+		k8ConfigPath := a.RootFlags.OtherConfig.Path
+		k8Config, err := MakeConfigFromPath(k8ConfigPath, a.RootFlags.OtherConfig.Context)
+		if err != nil {
+			return nil, err
+		}
+		return k8Config, nil
+
+	} else if kubeEnv, exists := os.LookupEnv("KUBECONFIG"); exists && kubeEnv != "" {
+		k8ConfigPath := os.Getenv("KUBECONFIG")
+		k8Config, err := MakeConfigFromPath(k8ConfigPath, a.RootFlags.OtherConfig.Context)
+		if err != nil {
+			return nil, err
+		}
+		return k8Config, nil
+
+	} else if a.RootFlags.OtherConfig.URL != "" {
+		k8ConfigURL := a.RootFlags.OtherConfig.URL
+		k8Config := MakeConfigFromURL(k8ConfigURL)
+		return k8Config, nil
+
+	}
+	err := errors.New("please provide either: " +
+		"Service account creds," +
+		"a path to a config file, " +
+		"assign $KUBECONFIG to a path to the config file, " +
+		"or provide a URL to the cluster")
+	return nil, err
+
 }
 
 // MakeConfigFromSecret generates the k8s config object from a secret, ca file (if present), and api server
@@ -260,9 +276,5 @@ func MakeConfigFromPath(configPath string, context string) (*rest.Config, error)
 		configOverrides.CurrentContext = context
 	}
 
-	k8Config, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides).ClientConfig()
-	if err != nil {
-		return nil, err
-	}
-	return k8Config, nil
+	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides).ClientConfig()
 }
