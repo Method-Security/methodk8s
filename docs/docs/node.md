@@ -22,14 +22,18 @@ Usage:
   methodk8s node enumerate [flags]
 
 Flags:
-  -h, --help       help for enumerate
+  -h, --help   help for enumerate
 
 Global Flags:
-  -c, --context string       cluster context
+  -a, --cert string          Base64 encoded ca certificate
+  -c, --context string       Cluster context (ie. minikube)
   -o, --output string        Output format (signal, json, yaml). Default value is signal (default "signal")
   -f, --output-file string   Path to output file. If blank, will output to STDOUT
-  -p, --path string          config path
+  -p, --path string          Absolute or relative path to the config file (ie. ~/.kube/config)
   -q, --quiet                Suppress output
-  -u, --url string           cluster url
+  -e, --server-url string    Cluster server url
+  -s, --service-account      Set to true if using service account workflow
+  -t, --token string         Base64 encoded service account token
+  -u, --url string           Cluster url (ie. mycluster.com)
   -v, --verbose              Verbose output
 ```

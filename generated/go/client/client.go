@@ -3,10 +3,9 @@
 package client
 
 import (
-	http "net/http"
-
 	core "github.com/method-security/methodk8s/generated/go/core"
 	option "github.com/method-security/methodk8s/generated/go/option"
+	http "net/http"
 )
 
 type Client struct {

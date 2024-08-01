@@ -1,7 +1,6 @@
 # Basic Usage
 
 Before you get started, you will need to export K8s credentials that you want methodk8s to utilize as environment variables. 
-**********TODO***************
 
 ## Binaries
 
@@ -13,7 +12,7 @@ methodk8s pod enumerate --context minikube --path ~/.kube/config
 
 ## Docker
 
-Running methodk8s within a Docker container requires that you pass k8s credentials to the container. This can be done in following 2 ways
+Running an authenticated workflow with methodk8s as a Docker container requires that you pass k8s credentials to the container. This can be done in following 2 ways
 1. Either by creating a service account and passing in the secrets
 
 ```bash
