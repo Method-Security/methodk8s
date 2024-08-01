@@ -19,6 +19,7 @@ func main() {
 	methodk8s.InitNodeCommand()
 	methodk8s.InitPodCommand()
 	methodk8s.InitServiceCommand()
+	methodk8s.InitServiceAccountCommand()
 
 	if err := methodk8s.RootCmd.Execute(); err != nil {
 		os.Exit(1)
