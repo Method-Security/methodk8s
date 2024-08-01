@@ -12,9 +12,8 @@ nav:
       - Installation: getting-started/installation.md
       - Basic Usage: getting-started/basic-usage.md
   - Docs:
-      - Overview: docs/index.md
+      - Overview: index.md
       - Capabilities:
-        - Current Instance: docs/current.md
         - Ingress: docs/ingress.md
         - Node: docs/node.md
         - Pod: docs/pod.md
