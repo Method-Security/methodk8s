@@ -165,7 +165,7 @@ func validateOutputFormat(output string) (writer.Format, error) {
 	return writer.NewFormat(format), nil
 }
 
-// Helper function to get the k8s config object
+// GetK8Config gets the k8s config object from the various auth mechanisms
 func GetK8Config(a *MethodK8s) (*rest.Config, error) {
 	if a.RootFlags.ServiceAccountConfig.ServiceAccount {
 		var err error
@@ -203,12 +203,11 @@ func GetK8Config(a *MethodK8s) (*rest.Config, error) {
 			}
 		}
 
-		k8Config, err := MakeConfigFromSecret(string(token), caCert, apiServerURL)
+		k8Config, err := MakeConfigFromSecret(token, caCert, apiServerURL)
 		if err != nil {
 			return nil, err
 		}
 		return k8Config, nil
-
 	} else if a.RootFlags.OtherConfig.Path != "" {
 		k8ConfigPath := a.RootFlags.OtherConfig.Path
 		k8Config, err := MakeConfigFromPath(k8ConfigPath, a.RootFlags.OtherConfig.Context)
