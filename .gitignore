@@ -34,3 +34,6 @@ go.work.sum
 
 # Don't ignore vendors
 !vendor/**
+
+# Other
+ca.crt

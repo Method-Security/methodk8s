@@ -13,7 +13,7 @@ types:
       addresses: list<Address>
   NodeReport:
     properties:
-      Nodes: list<Node>
-      Errors: optional<list<string>>
+      nodes: optional<list<Node>>
+      errors: optional<list<string>>
 
 

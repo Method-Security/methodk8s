@@ -10,8 +10,8 @@ from .ingress import Ingress
 
 
 class IngressReport(pydantic_v1.BaseModel):
-    gateways: typing.List[Gateway] = pydantic_v1.Field(alias="Gateways")
-    ingresses: typing.Optional[typing.List[Ingress]] = pydantic_v1.Field(alias="Ingresses", default=None)
+    gateways: typing.Optional[typing.List[Gateway]] = None
+    ingresses: typing.Optional[typing.List[Ingress]] = None
     errors: typing.Optional[typing.List[str]] = pydantic_v1.Field(alias="Errors", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:

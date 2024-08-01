@@ -136,8 +136,8 @@ func (i *Ingress) String() string {
 }
 
 type IngressReport struct {
-	Gateways  []*Gateway `json:"Gateways,omitempty" url:"Gateways,omitempty"`
-	Ingresses []*Ingress `json:"Ingresses,omitempty" url:"Ingresses,omitempty"`
+	Gateways  []*Gateway `json:"gateways,omitempty" url:"gateways,omitempty"`
+	Ingresses []*Ingress `json:"ingresses,omitempty" url:"ingresses,omitempty"`
 	Errors    []string   `json:"Errors,omitempty" url:"Errors,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -354,8 +354,8 @@ func (n *Node) String() string {
 }
 
 type NodeReport struct {
-	Nodes  []*Node  `json:"Nodes,omitempty" url:"Nodes,omitempty"`
-	Errors []string `json:"Errors,omitempty" url:"Errors,omitempty"`
+	Nodes  []*Node  `json:"nodes,omitempty" url:"nodes,omitempty"`
+	Errors []string `json:"errors,omitempty" url:"errors,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -527,8 +527,8 @@ func (p *Pod) String() string {
 }
 
 type PodReport struct {
-	Pods   []*Pod   `json:"Pods,omitempty" url:"Pods,omitempty"`
-	Errors []string `json:"Errors,omitempty" url:"Errors,omitempty"`
+	Pods   []*Pod   `json:"pods,omitempty" url:"pods,omitempty"`
+	Errors []string `json:"errors,omitempty" url:"errors,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -775,8 +775,8 @@ func (s *ServicePort) String() string {
 }
 
 type ServiceReport struct {
-	Services []*Service `json:"Services,omitempty" url:"Services,omitempty"`
-	Errors   []string   `json:"Errors,omitempty" url:"Errors,omitempty"`
+	Services []*Service `json:"services,omitempty" url:"services,omitempty"`
+	Errors   []string   `json:"errors,omitempty" url:"errors,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage

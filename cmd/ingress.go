@@ -18,7 +18,7 @@ func (a *MethodK8s) InitIngressCommand() {
 		Long:  `Enumerate Ingresses`,
 		Run: func(cmd *cobra.Command, args []string) {
 
-			onlyGateway, err := cmd.Flags().GetBool("gateways")
+			types, err := cmd.Flags().GetStringSlice("types")
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
@@ -26,7 +26,7 @@ func (a *MethodK8s) InitIngressCommand() {
 				return
 			}
 
-			report, err := ingress.EnumerateIngresses(a.K8Config, onlyGateway)
+			report, err := ingress.EnumerateIngresses(a.K8Config, types)
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
@@ -35,7 +35,7 @@ func (a *MethodK8s) InitIngressCommand() {
 			a.OutputSignal.Content = report
 		},
 	}
-	enumerateCmd.Flags().Bool("gateways", false, "Only include gateway objects")
+	enumerateCmd.Flags().StringSlice("types", []string{}, "List the types to emumerate (ie.--type ingress --type gateway)")
 
 	ingressCmd.AddCommand(enumerateCmd)
 	a.RootCmd.AddCommand(ingressCmd)

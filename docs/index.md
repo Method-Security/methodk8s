@@ -4,13 +4,13 @@ Hello and welcome to the methodk8s documentation. While we always want to provid
 
 - The [Getting Started](./getting-started/basic-usage.md) section provides onboarding material
 - The [Development](./development/setup.md) header is the best place to get started on developing on top of and with methodk8s
-- See the [Docs](./docs/index.md) section for a comprehensive rundown of methodk8s capabilities
+- See the [Docs](./index.md) section for a comprehensive rundown of methodk8s capabilities
 
 # About methodk8s
 
 methodk8s provides security operators with a number of data-rich K8s enumeration capabilities to help them gain visibility into their K8s environments. Designed with data-modeling and data-integration needs in mind, methodk8s can be used on its own as an interactive CLI, orchestrated as part of a broader data pipeline, or leveraged from within the Method Platform.
 
-The number of security-relevant K8s resources that methodk8s can enumerate are constantly growing. For the most up to date listing, please see the documentation [here](./docs/index.md)
+The number of security-relevant K8s resources that methodk8s can enumerate are constantly growing. For the most up to date listing, please see the documentation [here](./index.md)
 
 To learn more about methodk8s, please see the [Documentation site](https://method-security.github.io/methodk8s/) for the most detailed information.
 
@@ -26,7 +26,9 @@ For the full list of available installation options, please see the [Installatio
 - [Installation documentation](./getting-started/installation.md)
 
 ### Authentication
-**********TODO***************
+Authentication can be done in 2 ways:
+1. By setting the `--path` flag to point at a kube config file
+2. Setting the `$KUBECONFIG` env variable to the path of a kube config file
 
 ### General Usage
 
