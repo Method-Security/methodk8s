@@ -26,7 +26,8 @@ func EnumerateIngresses(ctx context.Context, k8config *rest.Config, types []stri
 	if contains(types, "gateway") || len(types) == 0 {
 		gatewayList, err := clientset.GatewayV1beta1().Gateways("").List(ctx, metav1.ListOptions{})
 		if err != nil {
-			return &methodk8s.IngressReport{Errors: errors}, err
+			errors = append(errors, err.Error())
+			goto afterGateway
 		}
 
 		for _, gateway := range gatewayList.Items {
@@ -54,7 +55,7 @@ func EnumerateIngresses(ctx context.Context, k8config *rest.Config, types []stri
 			gateways = append(gateways, &gatewayInfo)
 		}
 	}
-
+afterGateway:
 	ingresses := []*methodk8s.Ingress{}
 	if contains(types, "ingress") || len(types) == 0 {
 		clientset, err := kubernetes.NewForConfig(config)
