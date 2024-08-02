@@ -254,7 +254,6 @@ func CreateConfigFromPath(configPath string, context string) (*rest.Config, erro
 	if context != "" {
 		configOverrides.CurrentContext = context
 	}
-
 	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides).ClientConfig()
 }
 
