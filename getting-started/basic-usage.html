@@ -959,8 +959,7 @@
 <h2 id="docker">Docker<a class="headerlink" href="#docker" title="Permanent link">#</a></h2>
 <p>Running an authenticated workflow with methodk8s as a Docker container requires that you pass k8s credentials to the container. This can be done in following 2 ways
 1. Either by creating a service account and passing in the secrets</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>my-release<span class="w"> </span>./k8s-helm-chart
-docker<span class="w"> </span>run<span class="w"> </span>-e<span class="w"> </span><span class="nv">SERVICE_ACCOUNT_TOKEN</span><span class="o">=</span><span class="s2">&quot;XXXX&quot;</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">SERVER_URL</span><span class="o">=</span><span class="s2">&quot;https://ClusterURL.com&quot;</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">CA_CERT</span><span class="o">=</span><span class="s2">&quot;XXXX&quot;</span><span class="w"> </span>methodsecurity/methodk8s
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-e<span class="w"> </span><span class="nv">TOKEN</span><span class="o">=</span><span class="s2">&quot;XXXX&quot;</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">CLUSTER_URL</span><span class="o">=</span><span class="s2">&quot;https://ClusterURL.com&quot;</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">CA_CERT</span><span class="o">=</span><span class="s2">&quot;XXXX&quot;</span><span class="w"> </span>methodsecurity/methodk8s
 </code></pre></div>
 <ol>
 <li>By mounting the k8s config file</li>
