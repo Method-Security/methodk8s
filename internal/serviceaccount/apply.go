@@ -100,7 +100,7 @@ func getClusterRole() *rbacv1.ClusterRole {
 	return clusterRole
 }
 
-func Config(ctx context.Context, k8config *rest.Config, apply bool, namespace string) error {
+func Config(ctx context.Context, k8config *rest.Config, run bool, namespace string) error {
 	config := k8config
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
@@ -123,7 +123,7 @@ func Config(ctx context.Context, k8config *rest.Config, apply bool, namespace st
 	k8sObjects = append(k8sObjects, clusterRoleBinding)
 
 	for _, obj := range k8sObjects {
-		if apply {
+		if run {
 			switch o := obj.(type) {
 			case *rbacv1.ClusterRole:
 				_, err := clientset.RbacV1().ClusterRoles().Create(ctx, o, metav1.CreateOptions{})

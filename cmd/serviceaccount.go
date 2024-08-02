@@ -55,7 +55,7 @@ func (a *MethodK8s) InitServiceAccountCommand() {
 		Short: "Create a service account in your k8s cluster",
 		Long:  `Create a service account in your k8s cluster`,
 		Run: func(cmd *cobra.Command, args []string) {
-			apply, err := cmd.Flags().GetBool("apply")
+			run, err := cmd.Flags().GetBool("run")
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
@@ -71,7 +71,7 @@ func (a *MethodK8s) InitServiceAccountCommand() {
 				return
 			}
 
-			err = serviceaccount.Config(cmd.Context(), a.K8Config, apply, namespace)
+			err = serviceaccount.Config(cmd.Context(), a.K8Config, run, namespace)
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
@@ -83,7 +83,7 @@ func (a *MethodK8s) InitServiceAccountCommand() {
 
 	credsCmd.Flags().String("secretname", "method-sa-secret", "The name of the secret to use for authentication")
 	credsCmd.Flags().String("namespace", "default", "Set the namespace for the Service Account and Secret")
-	applyCmd.Flags().Bool("apply", false, "Apply the Service Account yamls (defaults to false)")
+	applyCmd.Flags().Bool("run", false, "Apply the Service Account yamls (defaults to false)")
 	applyCmd.Flags().String("namespace", "default", "Set the namespace for the Service Account and Secret")
 
 	configureAccountCmd.AddCommand(credsCmd)
