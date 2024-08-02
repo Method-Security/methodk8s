@@ -5,6 +5,7 @@ package methodk8s
 import (
 	json "encoding/json"
 	fmt "fmt"
+
 	core "github.com/method-security/methodk8s/generated/go/core"
 )
 

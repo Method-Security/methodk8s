@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"context"
-
 	"github.com/method-security/methodk8s/internal/pod"
 	"github.com/spf13/cobra"
 )
@@ -19,8 +17,7 @@ func (a *MethodK8s) InitPodCommand() {
 		Short: "Enumerate Pods",
 		Long:  `Enumerate Pods`,
 		Run: func(cmd *cobra.Command, args []string) {
-			ctx := context.Background()
-			report, err := pod.EnumeratePods(ctx, a.K8Config)
+			report, err := pod.EnumeratePods(cmd.Context(), a.K8Config)
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage

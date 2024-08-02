@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"context"
-
 	"github.com/method-security/methodk8s/internal/ingress"
 	"github.com/spf13/cobra"
 )
@@ -28,8 +26,7 @@ func (a *MethodK8s) InitIngressCommand() {
 				return
 			}
 
-			ctx := context.Background()
-			report, err := ingress.EnumerateIngresses(ctx, a.K8Config, types)
+			report, err := ingress.EnumerateIngresses(cmd.Context(), a.K8Config, types)
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
