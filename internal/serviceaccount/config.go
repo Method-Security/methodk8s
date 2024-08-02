@@ -13,7 +13,7 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-func getClusterRoleBinding(namespace, serviceAccountName string) (*rbacv1.ClusterRoleBinding, error) {
+func getClusterRoleBinding(namespace, serviceAccountName string) *rbacv1.ClusterRoleBinding {
 	clusterRoleBinding := &rbacv1.ClusterRoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
@@ -35,10 +35,10 @@ func getClusterRoleBinding(namespace, serviceAccountName string) (*rbacv1.Cluste
 			},
 		},
 	}
-	return clusterRoleBinding, nil
+	return clusterRoleBinding
 }
 
-func getSecret(namespace, serviceAccountName string) (*corev1.Secret, error) {
+func getSecret(namespace, serviceAccountName string) *corev1.Secret {
 	secret := &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -53,10 +53,10 @@ func getSecret(namespace, serviceAccountName string) (*corev1.Secret, error) {
 		},
 		Type: corev1.SecretTypeServiceAccountToken,
 	}
-	return secret, nil
+	return secret
 }
 
-func getServiceAccount(namespace, serviceAccountName string) (*corev1.ServiceAccount, error) {
+func getServiceAccount(namespace, serviceAccountName string) *corev1.ServiceAccount {
 	serviceAccount := &corev1.ServiceAccount{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -67,10 +67,10 @@ func getServiceAccount(namespace, serviceAccountName string) (*corev1.ServiceAcc
 			Namespace: namespace,
 		},
 	}
-	return serviceAccount, nil
+	return serviceAccount
 }
 
-func getClusterRole() (*rbacv1.ClusterRole, error) {
+func getClusterRole() *rbacv1.ClusterRole {
 	clusterRole := &rbacv1.ClusterRole{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
@@ -97,7 +97,7 @@ func getClusterRole() (*rbacv1.ClusterRole, error) {
 			},
 		},
 	}
-	return clusterRole, nil
+	return clusterRole
 }
 
 func Config(ctx context.Context, k8config *rest.Config, apply bool, namespace string) error {
@@ -110,31 +110,19 @@ func Config(ctx context.Context, k8config *rest.Config, apply bool, namespace st
 	serviceAccountName := "method-service-account"
 	k8sObjects := []interface{}{}
 
-	clusterRole, err := getClusterRole()
-	if err != nil {
-		return err
-	}
+	clusterRole := getClusterRole()
 	k8sObjects = append(k8sObjects, clusterRole)
 
-	serviceAccount, err := getServiceAccount(namespace, serviceAccountName)
-	if err != nil {
-		return err
-	}
+	serviceAccount := getServiceAccount(namespace, serviceAccountName)
 	k8sObjects = append(k8sObjects, serviceAccount)
 
-	secret, err := getSecret(namespace, serviceAccountName)
-	if err != nil {
-		return err
-	}
+	secret := getSecret(namespace, serviceAccountName)
 	k8sObjects = append(k8sObjects, secret)
 
-	clusterRoleBinding, err := getClusterRoleBinding(namespace, serviceAccountName)
-	if err != nil {
-		return err
-	}
+	clusterRoleBinding := getClusterRoleBinding(namespace, serviceAccountName)
 	k8sObjects = append(k8sObjects, clusterRoleBinding)
 
-	for i, obj := range k8sObjects {
+	for _, obj := range k8sObjects {
 		if apply {
 			switch o := obj.(type) {
 			case *rbacv1.ClusterRole:
@@ -142,36 +130,31 @@ func Config(ctx context.Context, k8config *rest.Config, apply bool, namespace st
 				if err != nil && !errors.IsAlreadyExists(err) {
 					return err
 				}
-				fmt.Printf("- ClusterRole configured (%d/%d)\n", i+1, len(k8sObjects))
+				fmt.Println("- ClusterRole configured (1/4)")
 			case *corev1.ServiceAccount:
 				_, err := clientset.CoreV1().ServiceAccounts(namespace).Create(ctx, o, metav1.CreateOptions{})
 				if err != nil && !errors.IsAlreadyExists(err) {
 					return err
 				}
-				fmt.Printf("- ServiceAccount configured (%d/%d)\n", i+1, len(k8sObjects))
+				fmt.Println("- ServiceAccount configured (2/4)")
 			case *corev1.Secret:
 				_, err := clientset.CoreV1().Secrets(namespace).Create(ctx, o, metav1.CreateOptions{})
 				if err != nil && !errors.IsAlreadyExists(err) {
 					return err
 				}
-				fmt.Printf("- Secret configured (%d/%d)\n", i+1, len(k8sObjects))
+				fmt.Println("- Secret configured (3/4))")
 			case *rbacv1.ClusterRoleBinding:
 				_, err := clientset.RbacV1().ClusterRoleBindings().Create(ctx, o, metav1.CreateOptions{})
 				if err != nil && !errors.IsAlreadyExists(err) {
 					return err
 				}
-				fmt.Printf("- ClusterRoleBinding configured (%d/%d)\n", i+1, len(k8sObjects))
+				fmt.Println("- ClusterRoleBinding configured (4/4)")
 			}
 		} else {
 			fmt.Println("---")
 			prettyPrintYAML(obj)
 		}
 	}
-
-	if apply {
-		fmt.Println("You are all set! Run 'methodk8 method-serviceaccount creds' to see your tokens")
-	}
-
 	return nil
 }
 
