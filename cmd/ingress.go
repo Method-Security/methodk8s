@@ -30,7 +30,6 @@ func (a *MethodK8s) InitIngressCommand() {
 
 			ctx := context.Background()
 			report, err := ingress.EnumerateIngresses(ctx, a.K8Config, types)
-
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage

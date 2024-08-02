@@ -22,13 +22,13 @@ func EnumerateIngresses(ctx context.Context, k8config *rest.Config, types []stri
 		return &methodk8s.IngressReport{Errors: errors}, err
 	}
 
-	gatewayList, err := clientset.GatewayV1beta1().Gateways("").List(ctx, metav1.ListOptions{})
-	if err != nil {
-		return &methodk8s.IngressReport{Errors: errors}, err
-	}
-
 	gateways := []*methodk8s.Gateway{}
 	if contains(types, "gateway") || len(types) == 0 {
+		gatewayList, err := clientset.GatewayV1beta1().Gateways("").List(ctx, metav1.ListOptions{})
+		if err != nil {
+			return &methodk8s.IngressReport{Errors: errors}, err
+		}
+
 		for _, gateway := range gatewayList.Items {
 			listeners := []*methodk8s.Listener{}
 			for _, listener := range gateway.Spec.Listeners {
