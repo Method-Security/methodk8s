@@ -26,7 +26,7 @@ func (a *MethodK8s) InitIngressCommand() {
 				return
 			}
 
-			report, err := ingress.EnumerateIngresses(a.K8Config, types)
+			report, err := ingress.EnumerateIngresses(cmd.Context(), a.K8Config, types)
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
@@ -35,7 +35,7 @@ func (a *MethodK8s) InitIngressCommand() {
 			a.OutputSignal.Content = report
 		},
 	}
-	enumerateCmd.Flags().StringSlice("types", []string{}, "List the types to emumerate (ie.--type ingress --type gateway)")
+	enumerateCmd.Flags().StringSlice("types", []string{}, "List the types to emumerate (ie.--types ingress --types gateway)")
 
 	ingressCmd.AddCommand(enumerateCmd)
 	a.RootCmd.AddCommand(ingressCmd)

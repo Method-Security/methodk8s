@@ -11,7 +11,7 @@ import (
 	gatewayclientset "sigs.k8s.io/gateway-api/pkg/client/clientset/versioned"
 )
 
-func EnumerateIngresses(k8config *rest.Config, types []string) (*methodk8s.IngressReport, error) {
+func EnumerateIngresses(ctx context.Context, k8config *rest.Config, types []string) (*methodk8s.IngressReport, error) {
 	resources := methodk8s.IngressReport{}
 	errors := []string{}
 	config := k8config
@@ -22,13 +22,14 @@ func EnumerateIngresses(k8config *rest.Config, types []string) (*methodk8s.Ingre
 		return &methodk8s.IngressReport{Errors: errors}, err
 	}
 
-	gatewayList, err := clientset.GatewayV1beta1().Gateways("").List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return &methodk8s.IngressReport{Errors: errors}, err
-	}
-
 	gateways := []*methodk8s.Gateway{}
 	if contains(types, "gateway") || len(types) == 0 {
+		gatewayList, err := clientset.GatewayV1beta1().Gateways("").List(ctx, metav1.ListOptions{})
+		if err != nil {
+			errors = append(errors, err.Error())
+			goto afterGateway
+		}
+
 		for _, gateway := range gatewayList.Items {
 			listeners := []*methodk8s.Listener{}
 			for _, listener := range gateway.Spec.Listeners {
@@ -54,7 +55,7 @@ func EnumerateIngresses(k8config *rest.Config, types []string) (*methodk8s.Ingre
 			gateways = append(gateways, &gatewayInfo)
 		}
 	}
-
+afterGateway:
 	ingresses := []*methodk8s.Ingress{}
 	if contains(types, "ingress") || len(types) == 0 {
 		clientset, err := kubernetes.NewForConfig(config)
@@ -62,8 +63,7 @@ func EnumerateIngresses(k8config *rest.Config, types []string) (*methodk8s.Ingre
 			errors = append(errors, err.Error())
 			return &methodk8s.IngressReport{Errors: errors}, err
 		}
-
-		ingressList, err := clientset.NetworkingV1().Ingresses("").List(context.TODO(), metav1.ListOptions{})
+		ingressList, err := clientset.NetworkingV1().Ingresses("").List(ctx, metav1.ListOptions{})
 		if err != nil {
 			errors = append(errors, err.Error())
 			return &methodk8s.IngressReport{Errors: errors}, err

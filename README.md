@@ -29,7 +29,11 @@ For the full list of available installation options, please see the [Installatio
 - [Installation documentation](./docs/getting-started/index.md)
 
 ### Authentication
-**********TODO***************
+For authenticated workflows, you need to pass in your kube config file to the docker container
+
+```bash
+docker run -v /path/to/your/kubeconfig:/opt/method/methodk8s/kubeconfig methodsecurity/methodk8s
+```
 
 ### General Usage
 

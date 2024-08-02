@@ -9,7 +9,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func EnumerateServices(k8config *rest.Config) (*methodk8s.ServiceReport, error) {
+func EnumerateServices(ctx context.Context, k8config *rest.Config) (*methodk8s.ServiceReport, error) {
 	resources := methodk8s.ServiceReport{}
 	errors := []string{}
 	config := k8config
