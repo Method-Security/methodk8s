@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"context"
-
 	"github.com/method-security/methodk8s/internal/serviceaccount"
 	"github.com/spf13/cobra"
 )
@@ -10,19 +8,40 @@ import (
 func (a *MethodK8s) InitServiceAccountCommand() {
 	serviceAccountCmd := &cobra.Command{
 
-		Use:   "method-serviceaccount",
-		Short: "Service Account setup and config",
-		Long:  `Service Account setup and config`,
+		Use:   "serviceaccount",
+		Short: "Configure, audit and command Service Accounts",
+		Long:  `Configure, audit and command Service Accounts`,
 	}
 
-	var namespace string
-	var apply bool
-	credentialsCmd := &cobra.Command{
+	configureAccountCmd := &cobra.Command{
+
+		Use:   "configure",
+		Short: "Configure Service Account",
+		Long:  `Configure Service Account`,
+	}
+
+	credsCmd := &cobra.Command{
 		Use:   "creds",
 		Short: "Service account credentials",
-		Long:  `Use this command to print to console the service account credentials`,
+		Long:  `Use this command to print the Service Account credentials`,
 		Run: func(cmd *cobra.Command, args []string) {
-			err := serviceaccount.PrintCredentials(cmd.Context(), a.K8Config, namespace)
+			namespace, err := cmd.Flags().GetString("namespace")
+			if err != nil {
+				errorMessage := err.Error()
+				a.OutputSignal.ErrorMessage = &errorMessage
+				a.OutputSignal.Status = 1
+				return
+			}
+
+			secretname, err := cmd.Flags().GetString("secretname")
+			if err != nil {
+				errorMessage := err.Error()
+				a.OutputSignal.ErrorMessage = &errorMessage
+				a.OutputSignal.Status = 1
+				return
+			}
+
+			err = serviceaccount.PrintCredentials(cmd.Context(), a.K8Config, namespace, secretname)
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
@@ -30,17 +49,29 @@ func (a *MethodK8s) InitServiceAccountCommand() {
 			}
 			a.OutputSignal.Content = nil
 		},
-		PersistentPostRunE: func(cmd *cobra.Command, _ []string) error {
-			return nil
-		},
 	}
-	configureCmd := &cobra.Command{
-		Use:   "config",
-		Short: "Set up service account in k8s cluster",
-		Long:  `Set up service account in k8s cluster`,
+	applyCmd := &cobra.Command{
+		Use:   "apply",
+		Short: "Create a service account in your k8s cluster",
+		Long:  `Create a service account in your k8s cluster`,
 		Run: func(cmd *cobra.Command, args []string) {
-			ctx := context.Background()
-			err := serviceaccount.Config(ctx, a.K8Config, apply, namespace)
+			apply, err := cmd.Flags().GetBool("apply")
+			if err != nil {
+				errorMessage := err.Error()
+				a.OutputSignal.ErrorMessage = &errorMessage
+				a.OutputSignal.Status = 1
+				return
+			}
+
+			namespace, err := cmd.Flags().GetString("namespace")
+			if err != nil {
+				errorMessage := err.Error()
+				a.OutputSignal.ErrorMessage = &errorMessage
+				a.OutputSignal.Status = 1
+				return
+			}
+
+			err = serviceaccount.Config(cmd.Context(), a.K8Config, apply, namespace)
 			if err != nil {
 				errorMessage := err.Error()
 				a.OutputSignal.ErrorMessage = &errorMessage
@@ -50,11 +81,13 @@ func (a *MethodK8s) InitServiceAccountCommand() {
 		},
 	}
 
-	credentialsCmd.Flags().StringVar(&namespace, "namespace", "default", "Set the namespace for the Service Account and Secret")
-	configureCmd.Flags().BoolVar(&apply, "apply", false, "Apply the Service Account yamls")
-	configureCmd.Flags().StringVar(&namespace, "namespace", "default", "Set the namespace for the Service Account and Secret")
+	credsCmd.Flags().String("secretname", "method-sa-secret", "The name of the secret to use for authentication")
+	credsCmd.Flags().String("namespace", "default", "Set the namespace for the Service Account and Secret")
+	applyCmd.Flags().Bool("apply", false, "Apply the Service Account yamls (defaults to false)")
+	applyCmd.Flags().String("namespace", "default", "Set the namespace for the Service Account and Secret")
 
-	serviceAccountCmd.AddCommand(credentialsCmd)
-	serviceAccountCmd.AddCommand(configureCmd)
+	configureAccountCmd.AddCommand(credsCmd)
+	configureAccountCmd.AddCommand(applyCmd)
+	serviceAccountCmd.AddCommand(configureAccountCmd)
 	a.RootCmd.AddCommand(serviceAccountCmd)
 }

@@ -57,7 +57,7 @@ func (a *MethodK8s) InitRootCommand() {
 		Use:   "methodk8s",
 		Short: "Audit K8 resources",
 		Long: `The K8s config is defined in order of:
-		1. The '--service-account' flag which creates a config via a token, CA-Cert, and URL set as ENV vars or flags
+		1. The '--serviceaccount' flag which creates a config via a token, CA-Cert, and URL set as ENV vars or flags
 		2. The '--path' flag which passes the path to a .kube/config file
 		3. The $KUBECONFIG var which holds the path to a .kube/config file
 		4. The '--url' flag which passes the URL of a potential cluster`,
@@ -107,8 +107,8 @@ func (a *MethodK8s) InitRootCommand() {
 	a.RootCmd.PersistentFlags().StringVarP(&outputFormat, "output", "o", "signal", "Output format (signal, json, yaml). Default value is signal")
 
 	// ServiceAccountConfig flags
-	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.ServiceAccountConfig.ServiceAccount, "service-account", "s", false, "Set to true if using service account workflow")
-	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.ServiceAccountConfig.Token, "token", "t", "", "Service account token")
+	a.RootCmd.PersistentFlags().BoolVarP(&a.RootFlags.ServiceAccountConfig.ServiceAccount, "serviceaccount", "s", false, "Set to true if using service account workflow")
+	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.ServiceAccountConfig.Token, "token", "t", "", "Base64 Service account token")
 	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.ServiceAccountConfig.CACert, "cert", "a", "", "Base64 encoded ca certificate")
 
 	// KubeConfig flags
@@ -117,10 +117,10 @@ func (a *MethodK8s) InitRootCommand() {
 	a.RootCmd.PersistentFlags().StringVarP(&a.RootFlags.KubeConfig.URL, "url", "u", "", "Cluster url (ie. mycluster.com)")
 
 	// Flag rules
-	a.RootCmd.MarkFlagsMutuallyExclusive("context", "service-account")
+	a.RootCmd.MarkFlagsMutuallyExclusive("context", "serviceaccount")
 	a.RootCmd.MarkFlagsMutuallyExclusive("context", "token")
 	a.RootCmd.MarkFlagsMutuallyExclusive("context", "cert")
-	a.RootCmd.MarkFlagsMutuallyExclusive("path", "service-account")
+	a.RootCmd.MarkFlagsMutuallyExclusive("path", "serviceaccount")
 	a.RootCmd.MarkFlagsMutuallyExclusive("path", "token")
 	a.RootCmd.MarkFlagsMutuallyExclusive("path", "cert")
 

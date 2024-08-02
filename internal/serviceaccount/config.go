@@ -45,7 +45,7 @@ func getSecret(namespace, serviceAccountName string) *corev1.Secret {
 			Kind:       "Secret",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "method-service-account-secret",
+			Name:      "method-sa-secret",
 			Namespace: namespace,
 			Annotations: map[string]string{
 				"kubernetes.io/service-account.name": serviceAccountName,

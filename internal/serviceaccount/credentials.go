@@ -10,9 +10,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func PrintCredentials(ctx context.Context, k8config *rest.Config, namespace string) error {
-	secretName := "method-service-account-secret"
-
+func PrintCredentials(ctx context.Context, k8config *rest.Config, namespace string, secretname string) error {
 	// Create the Kubernetes clientset
 	clientset, err := kubernetes.NewForConfig(k8config)
 	if err != nil {
@@ -20,7 +18,7 @@ func PrintCredentials(ctx context.Context, k8config *rest.Config, namespace stri
 	}
 
 	// Extract the Token from the secret
-	secret, err := clientset.CoreV1().Secrets(namespace).Get(ctx, secretName, metav1.GetOptions{})
+	secret, err := clientset.CoreV1().Secrets(namespace).Get(ctx, secretname, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
