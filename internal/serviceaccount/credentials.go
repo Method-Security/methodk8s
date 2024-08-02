@@ -20,7 +20,7 @@ func PrintCredentials(ctx context.Context, k8config *rest.Config, namespace stri
 	}
 
 	// Extract the Token from the secret
-	secret, err := clientset.CoreV1().Secrets(namespace).Get(context.TODO(), secretName, metav1.GetOptions{})
+	secret, err := clientset.CoreV1().Secrets(namespace).Get(ctx, secretName, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
