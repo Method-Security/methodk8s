@@ -204,7 +204,7 @@ func CreateConfigFromServiceAccountCreds(tokenFlag string, caCertFlag string, ur
 			return nil, err
 		}
 	} else {
-		token, err = base64.StdEncoding.DecodeString(os.Getenv("TOKEN"))
+		token, err = base64.StdEncoding.DecodeString(os.Getenv("K8S_TOKEN"))
 		if err != nil {
 			return nil, err
 		}
@@ -217,7 +217,7 @@ func CreateConfigFromServiceAccountCreds(tokenFlag string, caCertFlag string, ur
 			return nil, err
 		}
 	} else {
-		caCert, err = base64.StdEncoding.DecodeString(os.Getenv("CA_CERT"))
+		caCert, err = base64.StdEncoding.DecodeString(os.Getenv("K8S_CA_CERT"))
 		if err != nil {
 			return nil, err
 		}
@@ -225,7 +225,7 @@ func CreateConfigFromServiceAccountCreds(tokenFlag string, caCertFlag string, ur
 
 	clusterURL := urlFlag
 	if clusterURL == "" {
-		clusterURL = os.Getenv("CLUSTER_URL")
+		clusterURL = os.Getenv("K8S_CLUSTER_URL")
 	}
 
 	if caCert != nil {
