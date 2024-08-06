@@ -14,6 +14,7 @@ types:
   NodeReport:
     properties:
       nodes: optional<list<Node>>
+      clusterUrl: optional<string>
       errors: optional<list<string>>
 
 
