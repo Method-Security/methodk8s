@@ -33,6 +33,8 @@ types:
       name: string
       namespace: string
       version: string
+      node: string
+      clusterUrl: string
       status: Status
       containers: list<Container>
   PodReport:

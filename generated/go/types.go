@@ -313,6 +313,7 @@ type Node struct {
 	Os           string     `json:"os" url:"os"`
 	Instancetype string     `json:"instancetype" url:"instancetype"`
 	Status       bool       `json:"status" url:"status"`
+	ClusterUrl   string     `json:"clusterUrl" url:"clusterUrl"`
 	Addresses    []*Address `json:"addresses,omitempty" url:"addresses,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -485,6 +486,8 @@ type Pod struct {
 	Name       string       `json:"name" url:"name"`
 	Namespace  string       `json:"namespace" url:"namespace"`
 	Version    string       `json:"version" url:"version"`
+	Node       string       `json:"node" url:"node"`
+	ClusterUrl string       `json:"clusterUrl" url:"clusterUrl"`
 	Status     *Status      `json:"status,omitempty" url:"status,omitempty"`
 	Containers []*Container `json:"containers,omitempty" url:"containers,omitempty"`
 

@@ -76,6 +76,8 @@ func EnumeratePods(ctx context.Context, k8config *rest.Config) (*methodk8s.PodRe
 			Namespace:  pod.GetNamespace(),
 			Version:    pod.GetResourceVersion(),
 			Status:     &statusInfo,
+			Node:       pod.Spec.NodeName,
+			ClusterUrl: config.Host,
 			Containers: containers,
 		}
 		pods = append(pods, &podInfo)

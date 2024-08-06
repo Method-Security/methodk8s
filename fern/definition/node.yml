@@ -10,6 +10,7 @@ types:
       os: string
       instancetype: string
       status: boolean
+      clusterUrl: string
       addresses: list<Address>
   NodeReport:
     properties:
