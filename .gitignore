@@ -37,3 +37,6 @@ go.work.sum
 
 # Other
 ca.crt
+
+# Fern Python
+generated/python/**
