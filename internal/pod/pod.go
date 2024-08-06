@@ -21,7 +21,7 @@ func EnumeratePods(ctx context.Context, k8config *rest.Config) (*methodk8s.PodRe
 		return &methodk8s.PodReport{Errors: errors}, err
 	}
 
-	podsList, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
+	podsList, err := clientset.CoreV1().Pods("").List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return &methodk8s.PodReport{Errors: errors}, err
 	}

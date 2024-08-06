@@ -20,7 +20,7 @@ func EnumerateServices(ctx context.Context, k8config *rest.Config) (*methodk8s.S
 		return &methodk8s.ServiceReport{Errors: errors}, err
 	}
 
-	servicesList, err := clientset.CoreV1().Services("").List(context.TODO(), metav1.ListOptions{})
+	servicesList, err := clientset.CoreV1().Services("").List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return &methodk8s.ServiceReport{Errors: errors}, err
 	}
