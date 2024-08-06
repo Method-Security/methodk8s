@@ -49,8 +49,9 @@ func EnumerateNodes(ctx context.Context, k8config *rest.Config) (*methodk8s.Node
 	}
 
 	resources = methodk8s.NodeReport{
-		Nodes:  nodes,
-		Errors: errors,
+		Nodes:      nodes,
+		ClusterUrl: &config.Host,
+		Errors:     errors,
 	}
 
 	return &resources, nil

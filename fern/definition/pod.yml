@@ -33,9 +33,11 @@ types:
       name: string
       namespace: string
       version: string
+      node: string
       status: Status
       containers: list<Container>
   PodReport:
     properties:
       pods: optional<list<Pod>>
+      clusterUrl: optional<string>
       errors: optional<list<string>>

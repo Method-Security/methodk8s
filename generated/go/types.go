@@ -354,8 +354,9 @@ func (n *Node) String() string {
 }
 
 type NodeReport struct {
-	Nodes  []*Node  `json:"nodes,omitempty" url:"nodes,omitempty"`
-	Errors []string `json:"errors,omitempty" url:"errors,omitempty"`
+	Nodes      []*Node  `json:"nodes,omitempty" url:"nodes,omitempty"`
+	ClusterUrl *string  `json:"clusterUrl,omitempty" url:"clusterUrl,omitempty"`
+	Errors     []string `json:"errors,omitempty" url:"errors,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -485,6 +486,7 @@ type Pod struct {
 	Name       string       `json:"name" url:"name"`
 	Namespace  string       `json:"namespace" url:"namespace"`
 	Version    string       `json:"version" url:"version"`
+	Node       string       `json:"node" url:"node"`
 	Status     *Status      `json:"status,omitempty" url:"status,omitempty"`
 	Containers []*Container `json:"containers,omitempty" url:"containers,omitempty"`
 
@@ -527,8 +529,9 @@ func (p *Pod) String() string {
 }
 
 type PodReport struct {
-	Pods   []*Pod   `json:"pods,omitempty" url:"pods,omitempty"`
-	Errors []string `json:"errors,omitempty" url:"errors,omitempty"`
+	Pods       []*Pod   `json:"pods,omitempty" url:"pods,omitempty"`
+	ClusterUrl *string  `json:"clusterUrl,omitempty" url:"clusterUrl,omitempty"`
+	Errors     []string `json:"errors,omitempty" url:"errors,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
