@@ -44,14 +44,14 @@ func EnumerateNodes(ctx context.Context, k8config *rest.Config) (*methodk8s.Node
 			Instancetype: node.Labels["beta.kubernetes.io/instance-type"],
 			Status:       isNodeReady(&node),
 			Addresses:    addresses,
-			ClusterUrl:   config.Host,
 		}
 		nodes = append(nodes, &nodeInfo)
 	}
 
 	resources = methodk8s.NodeReport{
-		Nodes:  nodes,
-		Errors: errors,
+		Nodes:      nodes,
+		ClusterUrl: &config.Host,
+		Errors:     errors,
 	}
 
 	return &resources, nil

@@ -5,6 +5,7 @@ package methodk8s
 import (
 	json "encoding/json"
 	fmt "fmt"
+
 	core "github.com/method-security/methodk8s/generated/go/core"
 )
 
@@ -313,7 +314,6 @@ type Node struct {
 	Os           string     `json:"os" url:"os"`
 	Instancetype string     `json:"instancetype" url:"instancetype"`
 	Status       bool       `json:"status" url:"status"`
-	ClusterUrl   string     `json:"clusterUrl" url:"clusterUrl"`
 	Addresses    []*Address `json:"addresses,omitempty" url:"addresses,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -355,8 +355,9 @@ func (n *Node) String() string {
 }
 
 type NodeReport struct {
-	Nodes  []*Node  `json:"nodes,omitempty" url:"nodes,omitempty"`
-	Errors []string `json:"errors,omitempty" url:"errors,omitempty"`
+	Nodes      []*Node  `json:"nodes,omitempty" url:"nodes,omitempty"`
+	ClusterUrl *string  `json:"clusterUrl,omitempty" url:"clusterUrl,omitempty"`
+	Errors     []string `json:"errors,omitempty" url:"errors,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -487,7 +488,6 @@ type Pod struct {
 	Namespace  string       `json:"namespace" url:"namespace"`
 	Version    string       `json:"version" url:"version"`
 	Node       string       `json:"node" url:"node"`
-	ClusterUrl string       `json:"clusterUrl" url:"clusterUrl"`
 	Status     *Status      `json:"status,omitempty" url:"status,omitempty"`
 	Containers []*Container `json:"containers,omitempty" url:"containers,omitempty"`
 
@@ -530,8 +530,9 @@ func (p *Pod) String() string {
 }
 
 type PodReport struct {
-	Pods   []*Pod   `json:"pods,omitempty" url:"pods,omitempty"`
-	Errors []string `json:"errors,omitempty" url:"errors,omitempty"`
+	Pods       []*Pod   `json:"pods,omitempty" url:"pods,omitempty"`
+	ClusterUrl *string  `json:"clusterUrl,omitempty" url:"clusterUrl,omitempty"`
+	Errors     []string `json:"errors,omitempty" url:"errors,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage

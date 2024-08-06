@@ -10,11 +10,11 @@ types:
       os: string
       instancetype: string
       status: boolean
-      clusterUrl: string
       addresses: list<Address>
   NodeReport:
     properties:
       nodes: optional<list<Node>>
+      clusterUrl: optional<string>
       errors: optional<list<string>>
 
 
