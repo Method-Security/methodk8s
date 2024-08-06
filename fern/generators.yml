@@ -26,6 +26,7 @@ groups:
           location: pypi
           package-name: methodk8s
           token: ${TEST_PYPI_TOKEN}
+          url: https://test.pypi.org/legacy/
   pypi:
     generators:
       - name: fernapi/fern-pydantic-model
