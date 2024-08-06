@@ -9,6 +9,15 @@ groups:
         output:
           location: local-file-system
           path: ../generated/go
+  pypi-local:
+    generators:
+      - name: fernapi/fern-pydantic-model
+        version: 1.2.0
+        config:
+          package_name: methodk8s
+        output:
+          location: local-file-system
+          path: ../generated/python
   pypi-test:
     generators:
       - name: fernapi/fern-pydantic-model
