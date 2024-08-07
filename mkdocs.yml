@@ -18,6 +18,7 @@ nav:
         - Node: docs/node.md
         - Pod: docs/pod.md
         - Service: docs/service.md
+        - Service Account: docs/serviceaccount.md
   - Contributing:
       - How to contribute: community/community.md
       - Development:

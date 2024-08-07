@@ -9,7 +9,7 @@ The enumerate command will gather information about all of the ingresses that th
 ### Usage
 
 ```bash
-methodk8s ingress enumerate --gateways
+methodk8s ingress enumerate
 ```
 
 ### Help Text
@@ -23,7 +23,7 @@ Usage:
 
 Flags:
   -h, --help            help for enumerate
-      --types strings   List the types to emumerate (ie.--type ingress --type gateway)
+      --types strings   List the types to emumerate (ie.--types ingress --types gateway)
 
 Global Flags:
   -a, --cert string          Base64 encoded ca certificate
