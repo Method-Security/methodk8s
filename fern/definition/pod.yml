@@ -26,7 +26,7 @@ types:
     properties:
       name: string
       image: string
-      ports: list<ContainerPort>
+      ports: optional<list<ContainerPort>>
       securityContext: SecurityContext
   Pod:
     properties:
