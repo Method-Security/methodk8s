@@ -441,8 +441,8 @@ func (c *Container) String() string {
 }
 
 type ContainerPort struct {
-	Port     int           `json:"port" url:"port"`
-	Protocol ProtocolTypes `json:"protocol" url:"protocol"`
+	Port     int            `json:"port" url:"port"`
+	Protocol *ProtocolTypes `json:"protocol,omitempty" url:"protocol,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -484,9 +484,9 @@ func (c *ContainerPort) String() string {
 
 type Pod struct {
 	Name       string       `json:"name" url:"name"`
-	Namespace  string       `json:"namespace" url:"namespace"`
-	Version    string       `json:"version" url:"version"`
-	Node       string       `json:"node" url:"node"`
+	Namespace  *string      `json:"namespace,omitempty" url:"namespace,omitempty"`
+	Version    *string      `json:"version,omitempty" url:"version,omitempty"`
+	Node       *string      `json:"node,omitempty" url:"node,omitempty"`
 	Status     *Status      `json:"status,omitempty" url:"status,omitempty"`
 	Containers []*Container `json:"containers,omitempty" url:"containers,omitempty"`
 
@@ -572,9 +572,9 @@ func (p *PodReport) String() string {
 }
 
 type SecurityContext struct {
-	RunAsRoot                bool `json:"runAsRoot" url:"runAsRoot"`
-	AllowPrivilegeEscalation bool `json:"allowPrivilegeEscalation" url:"allowPrivilegeEscalation"`
-	ReadOnlyRootFilesystem   bool `json:"readOnlyRootFilesystem" url:"readOnlyRootFilesystem"`
+	RunAsRoot                *bool `json:"runAsRoot,omitempty" url:"runAsRoot,omitempty"`
+	AllowPrivilegeEscalation *bool `json:"allowPrivilegeEscalation,omitempty" url:"allowPrivilegeEscalation,omitempty"`
+	ReadOnlyRootFilesystem   *bool `json:"readOnlyRootFilesystem,omitempty" url:"readOnlyRootFilesystem,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -615,9 +615,9 @@ func (s *SecurityContext) String() string {
 }
 
 type Status struct {
-	Status StatusTypes `json:"status" url:"status"`
-	PodIp  string      `json:"podIp" url:"podIp"`
-	HostIp string      `json:"hostIp" url:"hostIp"`
+	Status *StatusTypes `json:"status,omitempty" url:"status,omitempty"`
+	PodIp  *string      `json:"podIp,omitempty" url:"podIp,omitempty"`
+	HostIp *string      `json:"hostIp,omitempty" url:"hostIp,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage

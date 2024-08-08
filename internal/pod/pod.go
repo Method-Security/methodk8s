@@ -40,15 +40,19 @@ func EnumeratePods(ctx context.Context, k8config *rest.Config) (*methodk8s.PodRe
 
 				portInfo := methodk8s.ContainerPort{
 					Port:     int(port.ContainerPort),
-					Protocol: protocol,
+					Protocol: &protocol,
 				}
 				ports = append(ports, &portInfo)
 			}
 
+			runAsRoot := container.SecurityContext != nil && container.SecurityContext.RunAsUser != nil && *container.SecurityContext.RunAsUser == 0
+			allowPrivilegeEscalation := container.SecurityContext != nil && container.SecurityContext.AllowPrivilegeEscalation != nil && *container.SecurityContext.AllowPrivilegeEscalation
+			readOnlyRootFilesystem := container.SecurityContext != nil && container.SecurityContext.ReadOnlyRootFilesystem != nil && *container.SecurityContext.ReadOnlyRootFilesystem
+
 			securityContext := methodk8s.SecurityContext{
-				RunAsRoot:                container.SecurityContext != nil && container.SecurityContext.RunAsUser != nil && *container.SecurityContext.RunAsUser == 0,
-				AllowPrivilegeEscalation: container.SecurityContext != nil && container.SecurityContext.AllowPrivilegeEscalation != nil && *container.SecurityContext.AllowPrivilegeEscalation,
-				ReadOnlyRootFilesystem:   container.SecurityContext != nil && container.SecurityContext.ReadOnlyRootFilesystem != nil && *container.SecurityContext.ReadOnlyRootFilesystem,
+				RunAsRoot:                &runAsRoot,
+				AllowPrivilegeEscalation: &allowPrivilegeEscalation,
+				ReadOnlyRootFilesystem:   &readOnlyRootFilesystem,
 			}
 
 			containerInfo := methodk8s.Container{
@@ -66,17 +70,19 @@ func EnumeratePods(ctx context.Context, k8config *rest.Config) (*methodk8s.PodRe
 			status, _ = methodk8s.NewStatusTypesFromString("UNKNOWN")
 		}
 		statusInfo := methodk8s.Status{
-			Status: status,
-			PodIp:  pod.Status.PodIP,
-			HostIp: pod.Status.HostIP,
+			Status: &status,
+			PodIp:  &pod.Status.PodIP,
+			HostIp: &pod.Status.HostIP,
 		}
 
+		namespace := pod.GetNamespace()
+		version := pod.GetResourceVersion()
 		podInfo := methodk8s.Pod{
 			Name:       pod.GetName(),
-			Namespace:  pod.GetNamespace(),
-			Version:    pod.GetResourceVersion(),
+			Namespace:  &namespace,
+			Version:    &version,
 			Status:     &statusInfo,
-			Node:       pod.Spec.NodeName,
+			Node:       &pod.Spec.NodeName,
 			Containers: containers,
 		}
 		pods = append(pods, &podInfo)

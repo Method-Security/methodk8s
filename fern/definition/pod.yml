@@ -10,31 +10,31 @@ types:
       - UNKNOWN
   Status:
     properties:
-      status: StatusTypes
-      podIp: string
-      hostIp: string
+      status: optional<StatusTypes>
+      podIp: optional<string>
+      hostIp: optional<string>
   ContainerPort:
     properties:
       port: integer
-      protocol: common.ProtocolTypes
+      protocol: optional<common.ProtocolTypes>
   SecurityContext:
     properties:
-      runAsRoot: boolean
-      allowPrivilegeEscalation: boolean
-      readOnlyRootFilesystem: boolean
+      runAsRoot: optional<boolean>
+      allowPrivilegeEscalation: optional<boolean>
+      readOnlyRootFilesystem: optional<boolean>
   Container:
     properties:
       name: string
       image: string
-      ports: list<ContainerPort>
-      securityContext: SecurityContext
+      ports: optional<list<ContainerPort>>
+      securityContext: optional<SecurityContext>
   Pod:
     properties:
       name: string
-      namespace: string
-      version: string
-      node: string
-      status: Status
+      namespace: optional<string>
+      version: optional<string>
+      node: optional<string>
+      status: optional<Status>
       containers: list<Container>
   PodReport:
     properties:
