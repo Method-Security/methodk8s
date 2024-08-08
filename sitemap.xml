@@ -2,57 +2,62 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://method-security.github.io/methodk8s/index.html</loc>
-         <lastmod>2024-08-02</lastmod>
+         <lastmod>2024-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://method-security.github.io/methodk8s/community/community.html</loc>
-         <lastmod>2024-08-02</lastmod>
+         <lastmod>2024-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://method-security.github.io/methodk8s/development/adding.html</loc>
-         <lastmod>2024-08-02</lastmod>
+         <lastmod>2024-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://method-security.github.io/methodk8s/development/principles.html</loc>
-         <lastmod>2024-08-02</lastmod>
+         <lastmod>2024-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://method-security.github.io/methodk8s/development/setup.html</loc>
-         <lastmod>2024-08-02</lastmod>
+         <lastmod>2024-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://method-security.github.io/methodk8s/docs/ingress.html</loc>
-         <lastmod>2024-08-02</lastmod>
+         <lastmod>2024-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://method-security.github.io/methodk8s/docs/node.html</loc>
-         <lastmod>2024-08-02</lastmod>
+         <lastmod>2024-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://method-security.github.io/methodk8s/docs/pod.html</loc>
-         <lastmod>2024-08-02</lastmod>
+         <lastmod>2024-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://method-security.github.io/methodk8s/docs/service.html</loc>
-         <lastmod>2024-08-02</lastmod>
+         <lastmod>2024-08-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://method-security.github.io/methodk8s/docs/serviceaccount.html</loc>
+         <lastmod>2024-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://method-security.github.io/methodk8s/getting-started/basic-usage.html</loc>
-         <lastmod>2024-08-02</lastmod>
+         <lastmod>2024-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://method-security.github.io/methodk8s/getting-started/installation.html</loc>
-         <lastmod>2024-08-02</lastmod>
+         <lastmod>2024-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
