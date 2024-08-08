@@ -40,7 +40,7 @@ func EnumeratePods(ctx context.Context, k8config *rest.Config) (*methodk8s.PodRe
 
 				portInfo := methodk8s.ContainerPort{
 					Port:     int(port.ContainerPort),
-					Protocol: &protocol,
+					Protocol: protocol,
 				}
 				ports = append(ports, &portInfo)
 			}
@@ -70,7 +70,7 @@ func EnumeratePods(ctx context.Context, k8config *rest.Config) (*methodk8s.PodRe
 			status, _ = methodk8s.NewStatusTypesFromString("UNKNOWN")
 		}
 		statusInfo := methodk8s.Status{
-			Status: &status,
+			Status: status,
 			PodIp:  &pod.Status.PodIP,
 			HostIp: &pod.Status.HostIP,
 		}

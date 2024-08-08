@@ -1,16 +1,21 @@
 types:
+  StateTypes:
+    enum:
+      - RUNNING
+      - STOPPED
   Address:
     properties:
-      type: string
-      address: string
+      type: optional<string>
+      address: optional<string>
   Node:
     properties:
       name: string
-      arch: string
-      os: string
-      instancetype: string
-      status: boolean
-      addresses: list<Address>
+      arch: optional<string>
+      image: optional<string>
+      os: optional<string>
+      instancetype: optional<string>
+      state: StateTypes
+      addresses: optional<list<Address>>
   NodeReport:
     properties:
       nodes: optional<list<Node>>
