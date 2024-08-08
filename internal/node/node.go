@@ -32,8 +32,8 @@ func EnumerateNodes(ctx context.Context, k8config *rest.Config) (*methodk8s.Node
 		for _, addr := range node.Status.Addresses {
 			addressType := string(addr.Type)
 			address := methodk8s.Address{
-				Type:    &addressType,
-				Address: &addr.Address,
+				Type:    addressType,
+				Address: addr.Address,
 			}
 			addresses = append(addresses, &address)
 		}
@@ -44,8 +44,8 @@ func EnumerateNodes(ctx context.Context, k8config *rest.Config) (*methodk8s.Node
 		nodeInfo := methodk8s.Node{
 			Name:         node.GetName(),
 			Arch:         &node.Status.NodeInfo.Architecture,
-			Image:        &node.Status.NodeInfo.OSImage,
-			Os:           &node.Status.NodeInfo.OperatingSystem,
+			Image:        node.Status.NodeInfo.OSImage,
+			Os:           node.Status.NodeInfo.OperatingSystem,
 			Instancetype: &instanceType,
 			State:        nodeState,
 			Addresses:    addresses,

@@ -5,17 +5,17 @@ types:
       - STOPPED
   Address:
     properties:
-      type: optional<string>
-      address: optional<string>
+      type: string
+      address: string
   Node:
     properties:
       name: string
       arch: optional<string>
-      image: optional<string>
-      os: optional<string>
+      image: string
+      os: string
       instancetype: optional<string>
       state: StateTypes
-      addresses: optional<list<Address>>
+      addresses: list<Address>
   NodeReport:
     properties:
       nodes: optional<list<Node>>

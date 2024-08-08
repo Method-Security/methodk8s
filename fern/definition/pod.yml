@@ -30,10 +30,11 @@ types:
       securityContext: optional<SecurityContext>
   Pod:
     properties:
+      uid: string
       name: string
-      namespace: optional<string>
+      namespace: string
       version: optional<string>
-      node: optional<string>
+      node: string
       status: optional<Status>
       containers: list<Container>
   PodReport:

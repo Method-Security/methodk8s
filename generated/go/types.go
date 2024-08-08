@@ -5,6 +5,7 @@ package methodk8s
 import (
 	json "encoding/json"
 	fmt "fmt"
+
 	core "github.com/method-security/methodk8s/generated/go/core"
 )
 
@@ -266,8 +267,8 @@ func (r *Rule) String() string {
 }
 
 type Address struct {
-	Type    *string `json:"type,omitempty" url:"type,omitempty"`
-	Address *string `json:"address,omitempty" url:"address,omitempty"`
+	Type    string `json:"type" url:"type"`
+	Address string `json:"address" url:"address"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -310,8 +311,8 @@ func (a *Address) String() string {
 type Node struct {
 	Name         string     `json:"name" url:"name"`
 	Arch         *string    `json:"arch,omitempty" url:"arch,omitempty"`
-	Image        *string    `json:"image,omitempty" url:"image,omitempty"`
-	Os           *string    `json:"os,omitempty" url:"os,omitempty"`
+	Image        string     `json:"image" url:"image"`
+	Os           string     `json:"os" url:"os"`
 	Instancetype *string    `json:"instancetype,omitempty" url:"instancetype,omitempty"`
 	State        StateTypes `json:"state" url:"state"`
 	Addresses    []*Address `json:"addresses,omitempty" url:"addresses,omitempty"`
@@ -506,10 +507,11 @@ func (c *ContainerPort) String() string {
 }
 
 type Pod struct {
+	Uid        string       `json:"uid" url:"uid"`
 	Name       string       `json:"name" url:"name"`
-	Namespace  *string      `json:"namespace,omitempty" url:"namespace,omitempty"`
+	Namespace  string       `json:"namespace" url:"namespace"`
 	Version    *string      `json:"version,omitempty" url:"version,omitempty"`
-	Node       *string      `json:"node,omitempty" url:"node,omitempty"`
+	Node       string       `json:"node" url:"node"`
 	Status     *Status      `json:"status,omitempty" url:"status,omitempty"`
 	Containers []*Container `json:"containers,omitempty" url:"containers,omitempty"`
 
