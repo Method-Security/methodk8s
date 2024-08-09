@@ -30,19 +30,24 @@ func EnumerateNodes(ctx context.Context, k8config *rest.Config) (*methodk8s.Node
 	for _, node := range nodesList.Items {
 		addresses := []*methodk8s.Address{}
 		for _, addr := range node.Status.Addresses {
+			addressType := string(addr.Type)
 			address := methodk8s.Address{
-				Type:    string(addr.Type),
+				Type:    addressType,
 				Address: addr.Address,
 			}
 			addresses = append(addresses, &address)
 		}
 
+		instanceType := node.Labels["beta.kubernetes.io/instance-type"]
+		nodeState, _ := whatState(&node)
+
 		nodeInfo := methodk8s.Node{
 			Name:         node.GetName(),
-			Arch:         node.Status.NodeInfo.Architecture,
+			Arch:         &node.Status.NodeInfo.Architecture,
+			Image:        node.Status.NodeInfo.OSImage,
 			Os:           node.Status.NodeInfo.OperatingSystem,
-			Instancetype: node.Labels["beta.kubernetes.io/instance-type"],
-			Status:       isNodeReady(&node),
+			Instancetype: &instanceType,
+			State:        nodeState,
 			Addresses:    addresses,
 		}
 		nodes = append(nodes, &nodeInfo)
@@ -57,11 +62,11 @@ func EnumerateNodes(ctx context.Context, k8config *rest.Config) (*methodk8s.Node
 	return &resources, nil
 }
 
-func isNodeReady(node *corev1.Node) bool {
+func whatState(node *corev1.Node) (methodk8s.StateTypes, error) {
 	for _, condition := range node.Status.Conditions {
 		if condition.Type == corev1.NodeReady {
-			return condition.Status == corev1.ConditionTrue
+			return methodk8s.NewStateTypesFromString("RUNNING")
 		}
 	}
-	return false
+	return methodk8s.NewStateTypesFromString("STOPPED")
 }

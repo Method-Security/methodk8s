@@ -309,10 +309,11 @@ func (a *Address) String() string {
 
 type Node struct {
 	Name         string     `json:"name" url:"name"`
-	Arch         string     `json:"arch" url:"arch"`
+	Arch         *string    `json:"arch,omitempty" url:"arch,omitempty"`
+	Image        string     `json:"image" url:"image"`
 	Os           string     `json:"os" url:"os"`
-	Instancetype string     `json:"instancetype" url:"instancetype"`
-	Status       bool       `json:"status" url:"status"`
+	Instancetype *string    `json:"instancetype,omitempty" url:"instancetype,omitempty"`
+	State        StateTypes `json:"state" url:"state"`
 	Addresses    []*Address `json:"addresses,omitempty" url:"addresses,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -396,6 +397,28 @@ func (n *NodeReport) String() string {
 	return fmt.Sprintf("%#v", n)
 }
 
+type StateTypes string
+
+const (
+	StateTypesRunning StateTypes = "RUNNING"
+	StateTypesStopped StateTypes = "STOPPED"
+)
+
+func NewStateTypesFromString(s string) (StateTypes, error) {
+	switch s {
+	case "RUNNING":
+		return StateTypesRunning, nil
+	case "STOPPED":
+		return StateTypesStopped, nil
+	}
+	var t StateTypes
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (s StateTypes) Ptr() *StateTypes {
+	return &s
+}
+
 type Container struct {
 	Name            string           `json:"name" url:"name"`
 	Image           string           `json:"image" url:"image"`
@@ -441,8 +464,8 @@ func (c *Container) String() string {
 }
 
 type ContainerPort struct {
-	Port     int            `json:"port" url:"port"`
-	Protocol *ProtocolTypes `json:"protocol,omitempty" url:"protocol,omitempty"`
+	Port     int           `json:"port" url:"port"`
+	Protocol ProtocolTypes `json:"protocol" url:"protocol"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -483,10 +506,11 @@ func (c *ContainerPort) String() string {
 }
 
 type Pod struct {
+	Uid        string       `json:"uid" url:"uid"`
 	Name       string       `json:"name" url:"name"`
-	Namespace  *string      `json:"namespace,omitempty" url:"namespace,omitempty"`
+	Namespace  string       `json:"namespace" url:"namespace"`
 	Version    *string      `json:"version,omitempty" url:"version,omitempty"`
-	Node       *string      `json:"node,omitempty" url:"node,omitempty"`
+	Node       string       `json:"node" url:"node"`
 	Status     *Status      `json:"status,omitempty" url:"status,omitempty"`
 	Containers []*Container `json:"containers,omitempty" url:"containers,omitempty"`
 
@@ -615,9 +639,9 @@ func (s *SecurityContext) String() string {
 }
 
 type Status struct {
-	Status *StatusTypes `json:"status,omitempty" url:"status,omitempty"`
-	PodIp  *string      `json:"podIp,omitempty" url:"podIp,omitempty"`
-	HostIp *string      `json:"hostIp,omitempty" url:"hostIp,omitempty"`
+	Status StatusTypes `json:"status" url:"status"`
+	PodIp  *string     `json:"podIp,omitempty" url:"podIp,omitempty"`
+	HostIp *string     `json:"hostIp,omitempty" url:"hostIp,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
